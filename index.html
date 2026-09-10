@@ -4,1135 +4,993 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I Lost My Name</title>
+
+<title>Find My Name</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600&display=swap');
+/* =========================================================
+   BASIC SETUP
+========================================================= */
 
 * {
     box-sizing: border-box;
 }
 
-:root {
-    --cream: #f8f1e8;
-    --ink: #62596c;
-    --pink: #e9bfd0;
-    --lavender: #cfc9e9;
-    --blue: #c4d8e8;
-    --green: #c8dfd1;
-    --yellow: #ead9a9;
-}
-
-html, body {
+html,
+body {
     margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background: #c9e8f5;
+    font-family: Georgia, "Times New Roman", serif;
 }
 
 body {
-    background: var(--cream);
-    color: var(--ink);
-    font-family: "Quicksand", sans-serif;
+    cursor: default;
 }
 
-/* --------------------------------------------------
-   INTRO
--------------------------------------------------- */
+
+/* =========================================================
+   MAIN ROOM
+========================================================= */
+
+#room {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            rgba(195, 226, 241, 0.35),
+            rgba(195, 226, 241, 0.35)
+        ),
+        url("assets/room.png") center center / cover no-repeat;
+
+    filter: saturate(0.9);
+}
+
+
+/*
+   A soft layer makes the room look slightly dreamlike.
+*/
+#dream-layer {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(125, 169, 190, 0.13) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   DISTURBING WALL QUESTIONS
+========================================================= */
+
+.questions {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+
+    animation:
+        questionsAppear 3s ease forwards 11s;
+}
+
+.question {
+    position: absolute;
+
+    color: rgba(68, 100, 115, 0.23);
+
+    font-size: clamp(13px, 1.4vw, 20px);
+    line-height: 1.4;
+
+    max-width: 180px;
+
+    transform: rotate(-2deg);
+
+    user-select: none;
+
+    transition:
+        opacity 0.5s,
+        color 0.5s;
+}
+
+.question:nth-child(even) {
+    transform: rotate(2deg);
+}
+
+.question:hover {
+    color: rgba(70, 55, 65, 0.75);
+}
+
+.q1  { top: 7%; left: 12%; }
+.q2  { top: 15%; left: 34%; }
+.q3  { top: 10%; left: 51%; }
+.q4  { top: 22%; right: 13%; }
+.q5  { top: 34%; left: 22%; }
+.q6  { top: 40%; right: 25%; }
+.q7  { top: 49%; left: 7%; }
+.q8  { top: 58%; right: 7%; }
+.q9  { bottom: 20%; left: 29%; }
+.q10 { bottom: 13%; right: 27%; }
+.q11 { bottom: 7%; left: 9%; }
+.q12 { bottom: 5%; right: 8%; }
+
+
+/* =========================================================
+   INTRO SCREEN
+========================================================= */
 
 #intro {
     position: fixed;
     inset: 0;
-    z-index: 100;
-    background:
-        radial-gradient(circle at center, #fffaf3 0%, #f7eee3 70%);
+
+    z-index: 50;
+
+    background: #c9e8f5;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+
+    color: rgba(255,255,255,0.85);
+
     transition:
-        opacity 1.5s ease,
-        filter 1.5s ease,
-        transform 1.5s ease;
+        opacity 2s ease,
+        visibility 2s ease;
 }
 
-#introGirl {
-    position: relative;
-    width: 180px;
-    height: 280px;
-    transition:
-        transform 1.8s cubic-bezier(.2,.8,.2,1),
-        filter 1s;
+#introText {
+    text-align: center;
+
+    font-size: clamp(13px, 1.4vw, 18px);
+    letter-spacing: 0.25em;
+
+    opacity: 0.7;
+
+    animation: breathe 3s ease-in-out infinite;
 }
 
-.intro-body {
-    position: absolute;
-    bottom: 0;
-    left: 25px;
-    width: 130px;
-    height: 155px;
-    border-radius: 55% 55% 25% 25%;
-    background: #d9b8b2;
-    box-shadow: 0 15px 35px rgba(70,50,70,.15);
-}
 
-.intro-head {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 140px;
-    height: 155px;
-    border-radius: 50%;
-    background: #e3b9a8;
-}
+/* =========================================================
+   CLOSE-UP GIRL
+========================================================= */
 
-.intro-hair {
-    position: absolute;
-    z-index: 4;
-    top: 0;
-    left: 4px;
-    width: 170px;
-    height: 210px;
-    border-radius: 55% 55% 40% 45%;
-    background:
-        repeating-linear-gradient(
-            75deg,
-            #4d4650 0px,
-            #59515b 5px,
-            #433d47 10px
-        );
-    box-shadow: 0 12px 25px rgba(40,30,40,.2);
-    clip-path: polygon(
-        8% 0,
-        90% 0,
-        100% 20%,
-        94% 65%,
-        87% 100%,
-        70% 83%,
-        58% 100%,
-        45% 82%,
-        31% 100%,
-        20% 77%,
-        8% 90%,
-        0 45%
-    );
-}
-
-.eye {
-    position: absolute;
-    z-index: 5;
-    top: 91px;
-    left: 104px;
-    width: 27px;
-    height: 32px;
-    border-radius: 50%;
-    background: white;
-    border: 3px solid #39333e;
-    box-shadow: 0 0 10px rgba(255,255,255,.8);
-}
-
-.eye::after {
-    content: "";
-    position: absolute;
-    width: 9px;
-    height: 18px;
-    border-radius: 50%;
-    background: #17151b;
-    left: 6px;
-    top: 4px;
-}
-
-.plush {
-    position: absolute;
-    z-index: 6;
-    bottom: 40px;
-    left: 47px;
-    width: 85px;
-    height: 95px;
-    border-radius: 45% 45% 35% 35%;
-    background: #c7aeb0;
-}
-
-.plush::before,
-.plush::after {
-    content: "";
-    position: absolute;
-    top: -18px;
-    width: 30px;
-    height: 45px;
-    border-radius: 50%;
-    background: #c7aeb0;
-}
-
-.plush::before {
-    left: 4px;
-    transform: rotate(-20deg);
-}
-
-.plush::after {
-    right: 4px;
-    transform: rotate(20deg);
-}
-
-.intro-text {
-    position: absolute;
-    bottom: 9%;
-    font-family: "Patrick Hand", cursive;
-    font-size: 18px;
-    opacity: .35;
-    letter-spacing: 2px;
-}
-
-#intro.close {
-    transform: scale(1.25);
-}
-
-#intro.close #introGirl {
-    transform: scale(3.8);
-}
-
-#intro.glitch {
-    animation: hallucination .8s steps(2);
-}
-
-@keyframes hallucination {
-    0%   { filter: blur(0); transform: translate(0); }
-    20%  { filter: blur(4px) hue-rotate(20deg); transform: translate(-8px, 3px); }
-    35%  { filter: blur(0) contrast(1.5); transform: translate(9px, -5px); }
-    55%  { filter: blur(7px); transform: translate(-5px, 4px); }
-    70%  { filter: invert(.04); transform: translate(5px, 0); }
-    100% { filter: blur(0); transform: translate(0); }
-}
-
-/* --------------------------------------------------
-   MAIN PAGE
--------------------------------------------------- */
-
-#main {
+#girlCloseup {
     position: fixed;
     inset: 0;
-    opacity: 0;
+
+    z-index: 40;
+
     pointer-events: none;
-    transition: opacity 2s ease;
-    overflow: hidden;
 
-    background:
-        radial-gradient(circle at 50% 48%, rgba(255,255,255,.8), transparent 35%),
-        linear-gradient(135deg, #f9f1e8, #f4ecdf);
+    opacity: 0;
+
+    background-image: url("assets/room.png");
+    background-repeat: no-repeat;
+    background-size: auto 250%;
+    background-position: center 58%;
+
+    /*
+       The oversized background image makes the girl's face
+       appear extremely close to the screen.
+    */
+
+    transform: scale(1.15);
+
+    filter:
+        saturate(0.65)
+        contrast(1.08)
+        brightness(0.85);
+
+    transition:
+        opacity 2s ease,
+        transform 5s cubic-bezier(.22,.61,.36,1);
 }
 
-#main.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
 
-/* paper grain */
-
-#main::after {
+/*
+   Dark veil over close-up.
+*/
+#girlCloseup::after {
     content: "";
+
     position: absolute;
     inset: 0;
-    pointer-events: none;
-    opacity: .12;
-    background-image:
-        radial-gradient(#777 0.6px, transparent .6px);
-    background-size: 5px 5px;
-    mix-blend-mode: multiply;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 15%,
+            rgba(20, 30, 38, 0.35) 100%
+        );
 }
 
-/* --------------------------------------------------
-   BACKGROUND QUESTIONS
--------------------------------------------------- */
 
-.question {
+/* =========================================================
+   THE EYE
+========================================================= */
+
+#eye {
     position: absolute;
-    font-family: "Patrick Hand", cursive;
-    font-size: clamp(16px, 2vw, 25px);
-    letter-spacing: 1px;
-    opacity: .09;
-    transform: rotate(var(--rotation));
-    user-select: none;
-    white-space: nowrap;
-    animation: questionFade 8s ease-in-out infinite alternate;
-}
 
-@keyframes questionFade {
-    from { opacity: .045; }
-    to   { opacity: .13; }
-}
-
-.q1 { top: 6%; left: 4%; --rotation: -3deg; }
-.q2 { top: 15%; right: 7%; --rotation: 4deg; }
-.q3 { top: 42%; left: 3%; --rotation: -6deg; }
-.q4 { top: 51%; right: 3%; --rotation: 5deg; }
-.q5 { bottom: 13%; left: 7%; --rotation: -4deg; }
-.q6 { bottom: 5%; right: 9%; --rotation: 3deg; }
-.q7 { top: 29%; left: 21%; --rotation: 5deg; }
-.q8 { bottom: 27%; right: 18%; --rotation: -7deg; }
-.q9 { top: 4%; left: 45%; --rotation: 2deg; }
-.q10 { bottom: 3%; left: 40%; --rotation: -3deg; }
-
-/* --------------------------------------------------
-   PIXEL MESSAGE
--------------------------------------------------- */
-
-#message {
-    position: absolute;
-    z-index: 20;
-    top: 9%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 350px;
-    text-align: center;
-    font-family: "Patrick Hand", cursive;
-    font-size: clamp(18px, 2.2vw, 28px);
-    letter-spacing: 2px;
+    top: 50%;
+
+    width: 120px;
+    height: 70px;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.2);
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease,
+        transform 3s cubic-bezier(.17,.67,.31,1.2);
+}
+
+
+/*
+   White part of eye.
+*/
+#eye::before {
+    content: "";
+
+    position: absolute;
+    inset: 10px 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #b8d5db 0%,
+            #7b9298 45%,
+            #435158 75%,
+            transparent 76%
+        );
+
+    border-radius: 50%;
+
+    filter: blur(0.4px);
+}
+
+
+/*
+   Iris.
+*/
+#eye::after {
+    content: "";
+
+    position: absolute;
+
+    width: 38px;
+    height: 38px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #050607 0 18%,
+            #17262a 19% 45%,
+            #405b61 46% 62%,
+            #111719 63%
+        );
+
+    box-shadow:
+        0 0 12px rgba(0,0,0,0.7);
+
+    animation: stare 4s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   HALLUCINATION
+========================================================= */
+
+#hallucination {
+    position: fixed;
+    inset: 0;
+
+    z-index: 60;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.08) 0px,
+            rgba(255,255,255,0.08) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    mix-blend-mode: screen;
+}
+
+
+/*
+   Colored ghost images.
+*/
+#hallucination::before,
+#hallucination::after {
+    content: "";
+
+    position: absolute;
+    inset: -5%;
+
+    background: url("assets/room.png") center / cover no-repeat;
+
+    opacity: 0.35;
+}
+
+#hallucination::before {
+    transform: translateX(-14px);
+    filter: sepia(1) hue-rotate(125deg) saturate(5);
+}
+
+#hallucination::after {
+    transform: translateX(14px);
+    filter: sepia(1) hue-rotate(250deg) saturate(5);
+}
+
+
+/* =========================================================
+   PIXELS
+========================================================= */
+
+#pixels {
+    position: absolute;
+
+    left: 50%;
+    top: 42%;
+
+    width: 300px;
+    height: 120px;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
 }
 
 .pixel {
-    display: inline-block;
-    width: 4px;
-    height: 4px;
-    margin: 2px;
-    background: #7c7081;
+    position: absolute;
+
+    width: 3px;
+    height: 3px;
+
+    background: rgba(66, 108, 137, 0.9);
+
     opacity: 0;
-    animation: pixelAppear .8s forwards;
+
+    animation: pixelForm 3s forwards;
 }
 
-@keyframes pixelAppear {
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+#message {
+    position: absolute;
+
+    left: 50%;
+    top: 44%;
+
+    transform: translate(-50%, -50%);
+
+    width: min(90%, 600px);
+
+    text-align: center;
+
+    color: rgba(45, 88, 116, 0.92);
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: clamp(18px, 2vw, 28px);
+
+    letter-spacing: 0.08em;
+
+    opacity: 0;
+
+    text-shadow:
+        1px 0 rgba(255,255,255,0.3),
+        -1px 0 rgba(80,130,160,0.2);
+
+    filter: blur(0.2px);
+
+    transition:
+        opacity 2s ease;
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+#controls {
+    position: fixed;
+
+    z-index: 100;
+
+    left: 50%;
+    bottom: 35px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 12px;
+
+    opacity: 0;
+
+    transition: opacity 2s ease;
+}
+
+button {
+    border: 1px solid rgba(80,110,125,0.25);
+
+    background: rgba(235,248,252,0.48);
+
+    color: rgba(48,75,87,0.75);
+
+    padding: 10px 20px;
+
+    border-radius: 20px;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(5px);
+
+    transition:
+        background 0.3s,
+        transform 0.3s;
+}
+
+button:hover {
+    background: rgba(255,255,255,0.7);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+
+@keyframes breathe {
+
+    0%, 100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+
+@keyframes questionsAppear {
+
     from {
         opacity: 0;
-        transform: translateY(12px) scale(0);
     }
+
     to {
-        opacity: .5;
-        transform: translateY(0) scale(1);
+        opacity: 1;
     }
 }
 
-#messageText {
-    opacity: 0;
-    transition: opacity 1.5s;
+
+@keyframes stare {
+
+    0%, 100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.08);
+    }
 }
 
-#messageText.show {
-    opacity: .72;
+
+@keyframes hallucinate {
+
+    0% {
+        opacity: 0;
+        filter: blur(0);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    30% {
+        transform: translateX(-12px) skewX(2deg);
+    }
+
+    45% {
+        transform: translateX(14px) skewX(-3deg);
+    }
+
+    60% {
+        transform: translateX(-8px);
+    }
+
+    75% {
+        opacity: 0.7;
+        filter: blur(5px);
+    }
+
+    100% {
+        opacity: 0;
+        filter: blur(0);
+        transform: translateX(0);
+    }
 }
 
-/* --------------------------------------------------
-   GIRL
--------------------------------------------------- */
 
-#girl {
-    position: absolute;
-    z-index: 10;
-    left: 50%;
-    top: 52%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 270px;
-    transition: transform 1s ease;
+/* =========================================================
+   FINAL ROOM DISTORTION
+========================================================= */
+
+.final-shake {
+    animation: roomShake 0.6s ease;
 }
 
-.girl-body {
-    position: absolute;
-    bottom: 15px;
-    left: 29px;
-    width: 125px;
-    height: 135px;
-    border-radius: 55% 55% 30% 30%;
-    background: #d8b7b2;
-    box-shadow: 0 15px 25px rgba(70,50,70,.12);
+@keyframes roomShake {
+
+    0%,100% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-5px, 2px);
+    }
+
+    40% {
+        transform: translate(4px, -3px);
+    }
+
+    60% {
+        transform: translate(-3px, 3px);
+    }
+
+    80% {
+        transform: translate(3px, -1px);
+    }
 }
 
-.girl-head {
-    position: absolute;
-    top: 25px;
-    left: 23px;
-    width: 135px;
-    height: 150px;
-    border-radius: 50%;
-    background: #e1b8a6;
-}
 
-.girl-hair {
-    position: absolute;
-    z-index: 4;
-    top: 0;
-    left: 3px;
-    width: 173px;
-    height: 215px;
-    border-radius: 50%;
-    background:
-        repeating-linear-gradient(
-            75deg,
-            #514952,
-            #514952 5px,
-            #433d46 9px
-        );
-    clip-path: polygon(
-        10% 0,
-        92% 0,
-        100% 35%,
-        93% 100%,
-        78% 85%,
-        66% 100%,
-        53% 83%,
-        41% 100%,
-        28% 80%,
-        14% 100%,
-        0 62%
-    );
-}
-
-.girl-eye {
-    position: absolute;
-    z-index: 5;
-    left: 105px;
-    top: 96px;
-    width: 25px;
-    height: 30px;
-    border: 3px solid #3d3741;
-    border-radius: 50%;
-    background: white;
-}
-
-.girl-eye::after {
-    content: "";
-    position: absolute;
-    left: 6px;
-    top: 4px;
-    width: 8px;
-    height: 18px;
-    border-radius: 50%;
-    background: #17151a;
-}
-
-.bunny {
-    position: absolute;
-    z-index: 6;
-    bottom: 33px;
-    left: 48px;
-    width: 82px;
-    height: 88px;
-    border-radius: 45%;
-    background: #c8b1b0;
-}
-
-.bunny::before,
-.bunny::after {
-    content: "";
-    position: absolute;
-    top: -23px;
-    width: 26px;
-    height: 48px;
-    background: #c8b1b0;
-    border-radius: 50%;
-}
-
-.bunny::before {
-    left: 5px;
-    transform: rotate(-17deg);
-}
-
-.bunny::after {
-    right: 5px;
-    transform: rotate(17deg);
-}
-
-.ground {
-    position: absolute;
-    bottom: 0;
-    left: -45px;
-    width: 270px;
-    height: 25px;
-    border-radius: 50%;
-    background: rgba(130,115,125,.1);
-}
-
-/* --------------------------------------------------
-   BUTTONS
--------------------------------------------------- */
-
-#buttons {
-    position: absolute;
-    inset: 0;
-    z-index: 30;
-}
-
-.horror-button {
-    position: absolute;
-    border: 1px solid rgba(105,90,110,.25);
-    background: rgba(255,255,255,.24);
-    color: #665d70;
-    font-family: "Patrick Hand", cursive;
-    font-size: 21px;
-    letter-spacing: 1.5px;
-    padding: 11px 25px;
-    border-radius: 40px;
-    cursor: pointer;
-    backdrop-filter: blur(3px);
-    box-shadow: 0 5px 15px rgba(100,80,100,.06);
-    transition:
-        left .7s cubic-bezier(.2,.8,.2,1),
-        top .7s cubic-bezier(.2,.8,.2,1),
-        transform .2s,
-        opacity .8s,
-        width .5s,
-        padding .5s;
-}
-
-.horror-button:hover {
-    transform: scale(1.08) rotate(-2deg);
-    background: rgba(255,255,255,.45);
-}
-
-.horror-button.flee {
-    animation: flee .55s ease;
-}
-
-@keyframes flee {
-    0% { transform: scale(1); }
-    30% { transform: scale(.8) translateX(15px); }
-    100% { transform: scale(1); }
-}
-
-.horror-button.fading {
-    opacity: .13;
-}
-
-#b0 { left: 19%; top: 21%; background: rgba(239,199,213,.25); }
-#b1 { left: 67%; top: 20%; background: rgba(213,207,235,.25); }
-#b2 { left: 24%; top: 39%; background: rgba(201,216,235,.25); }
-#b3 { left: 59%; top: 38%; background: rgba(202,225,210,.25); }
-#b4 { left: 12%; top: 57%; background: rgba(238,219,174,.25); }
-#b5 { left: 70%; top: 53%; background: rgba(240,190,208,.25); }
-#b6 { left: 27%; top: 69%; background: rgba(238,195,210,.25); }
-#b7 { left: 63%; top: 67%; background: rgba(195,213,234,.25); }
-#b8 { left: 35%; top: 83%; background: rgba(210,204,233,.25); }
-#b9 { left: 53%; top: 82%; background: rgba(239,200,177,.25); }
-
-/* --------------------------------------------------
-   CLICK RESPONSE
--------------------------------------------------- */
-
-#response {
-    position: fixed;
-    z-index: 100;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-family: "Patrick Hand", cursive;
-    font-size: 25px;
-    letter-spacing: 2px;
-    color: #5c5262;
-    opacity: 0;
-    pointer-events: none;
-    text-align: center;
-    transition: opacity .7s;
-}
-
-#response.show {
-    opacity: .8;
-}
-
-/* --------------------------------------------------
+/* =========================================================
    MOBILE
--------------------------------------------------- */
+========================================================= */
 
-@media (max-width: 650px) {
+@media (max-width: 700px) {
 
     .question {
-        font-size: 14px;
+        font-size: 11px;
+        max-width: 110px;
     }
 
-    #girl {
-        transform: translate(-50%, -50%) scale(.75);
+    #girlCloseup {
+        background-size: auto 210%;
     }
 
-    .horror-button {
-        font-size: 17px;
-        padding: 8px 17px;
+    #eye {
+        width: 90px;
+        height: 55px;
     }
 
     #message {
-        width: 280px;
-        top: 7%;
+        font-size: 16px;
     }
 }
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 </style>
 </head>
 
+
 <body>
 
-<!-- ================================================
+<!-- =====================================================
      INTRO
-================================================ -->
+====================================================== -->
 
-<section id="intro">
+<div id="intro">
 
-    <div id="introGirl">
-
-        <div class="intro-head"></div>
-        <div class="intro-body"></div>
-
-        <div class="intro-hair"></div>
-
-        <div class="eye"></div>
-
-        <div class="plush"></div>
-
+    <div id="introText">
+        PLEASE WAIT...
     </div>
 
-    <div class="intro-text">
-        ...are you still there?
-    </div>
-
-</section>
+</div>
 
 
-<!-- ================================================
-     MAIN
-================================================ -->
+<!-- =====================================================
+     ROOM
+====================================================== -->
 
-<main id="main">
+<main id="room">
 
-    <!-- barely readable thoughts -->
-
-    <div class="question q1">what if I'm not real?</div>
-    <div class="question q2">what if someone is watching?</div>
-    <div class="question q3">does anyone actually care?</div>
-    <div class="question q4">why does everything feel wrong?</div>
-    <div class="question q5">what if I disappear?</div>
-    <div class="question q6">is this all there is?</div>
-    <div class="question q7">am I safe?</div>
-    <div class="question q8">can you hear me?</div>
-    <div class="question q9">is there anyone out there?</div>
-    <div class="question q10">why am I so tired?</div>
+    <div id="dream-layer"></div>
 
 
-    <!-- pixel message -->
+    <!-- DISTURBING QUESTIONS -->
 
-    <div id="message">
+    <div class="questions">
 
-        <div id="pixels"></div>
+        <div class="question q1">
+            What if everything is a lie?
+        </div>
 
-        <div id="messageText">
-            I lost my name.<br>
-            Find it. Please..?
+        <div class="question q2">
+            Is anyone really here?
+        </div>
+
+        <div class="question q3">
+            Do you remember who you were?
+        </div>
+
+        <div class="question q4">
+            What happens when we die?
+        </div>
+
+        <div class="question q5">
+            Are we all just imagining it?
+        </div>
+
+        <div class="question q6">
+            What if you're not enough?
+        </div>
+
+        <div class="question q7">
+            Can you hear me?
+        </div>
+
+        <div class="question q8">
+            Why does it hurt so much?
+        </div>
+
+        <div class="question q9">
+            Are you afraid of being forgotten?
+        </div>
+
+        <div class="question q10">
+            What if nobody is watching?
+        </div>
+
+        <div class="question q11">
+            Does anyone notice when we disappear?
+        </div>
+
+        <div class="question q12">
+            I'm so tired...
         </div>
 
     </div>
 
 
-    <!-- girl -->
+    <!-- CLOSEUP -->
 
-    <div id="girl">
+    <div id="girlCloseup">
 
-        <div class="girl-head"></div>
-        <div class="girl-body"></div>
-
-        <div class="girl-hair"></div>
-
-        <div class="girl-eye"></div>
-
-        <div class="bunny"></div>
-
-        <div class="ground"></div>
+        <div id="eye"></div>
 
     </div>
 
 
-    <!-- buttons -->
+    <!-- HALLUCINATION EFFECT -->
 
-    <div id="buttons">
+    <div id="hallucination"></div>
 
-        <button class="horror-button" id="b0">Treasure</button>
-        <button class="horror-button" id="b1">Hollows</button>
-        <button class="horror-button" id="b2">Butterflies</button>
-        <button class="horror-button" id="b3">Blink</button>
-        <button class="horror-button" id="b4">Closet</button>
-        <button class="horror-button" id="b5">Tsunami</button>
-        <button class="horror-button" id="b6">Rage</button>
-        <button class="horror-button" id="b7">Cool</button>
-        <button class="horror-button" id="b8">Bait</button>
-        <button class="horror-button" id="b9">Surge</button>
 
+    <!-- PIXEL MESSAGE -->
+
+    <div id="pixels"></div>
+
+    <div id="message">
+        I lost my name.<br>
+        Find it. Please..?
     </div>
 
 
-    <div id="response"></div>
+    <!-- BUTTONS -->
+
+    <div id="controls">
+
+        <button onclick="beginAgain()">
+            Look again
+        </button>
+
+        <button onclick="toggleQuestions()">
+            The questions
+        </button>
+
+    </div>
 
 </main>
 
 
 <script>
-/* ==================================================
-   INTRO SEQUENCE
-================================================== */
+
+/* =========================================================
+   VARIABLES
+========================================================= */
 
 const intro = document.getElementById("intro");
-const introGirl = document.getElementById("introGirl");
-const main = document.getElementById("main");
-
-setTimeout(() => {
-    intro.classList.add("close");
-}, 1200);
-
-setTimeout(() => {
-    intro.classList.add("glitch");
-}, 3200);
-
-setTimeout(() => {
-
-    intro.style.opacity = "0";
-    intro.style.filter = "blur(10px)";
-
-    main.classList.add("visible");
-
-    setTimeout(() => {
-        intro.style.display = "none";
-        startPixelMessage();
-    }, 1700);
-
-}, 4300);
+const girl = document.getElementById("girlCloseup");
+const eye = document.getElementById("eye");
+const hallucination = document.getElementById("hallucination");
+const message = document.getElementById("message");
+const pixels = document.getElementById("pixels");
+const controls = document.getElementById("controls");
+const room = document.getElementById("room");
+const questions = document.querySelector(".questions");
 
 
-/* ==================================================
-   PIXEL MESSAGE
-================================================== */
+/* =========================================================
+   CREATE PIXELS
+========================================================= */
 
-const pixelContainer = document.getElementById("pixels");
-const messageText = document.getElementById("messageText");
+function createPixels() {
 
-function startPixelMessage() {
+    pixels.innerHTML = "";
 
-    /*
-       Create little pixels that appear to gather
-       above the girl's head.
-    */
+    for (let i = 0; i < 180; i++) {
 
-    for (let i = 0; i < 65; i++) {
+        const p = document.createElement("div");
 
-        const pixel = document.createElement("span");
-
-        pixel.className = "pixel";
-
-        pixel.style.animationDelay =
-            (Math.random() * 1.8) + "s";
-
-        pixel.style.transform =
-            `translate(
-                ${(Math.random() - .5) * 170}px,
-                ${Math.random() * 100}px
-            )`;
-
-        pixelContainer.appendChild(pixel);
-    }
-
-    setTimeout(() => {
-        messageText.classList.add("show");
-    }, 1700);
-}
-
-
-/* ==================================================
-   BUTTON LOGIC
-================================================== */
-
-const buttons =
-    [...document.querySelectorAll(".horror-button")];
-
-const responses = {
-
-    Treasure:
-        "You remember finding something here.",
-
-    Hollows:
-        "There is nothing inside. You checked.",
-
-    Butterflies:
-        "They stopped moving when you looked at them.",
-
-    Blink:
-        "You blinked. Something changed.",
-
-    Closet:
-        "The door was already open.",
-
-    Tsunami:
-        "You hear water somewhere far away.",
-
-    Rage:
-        "You don't remember being angry.",
-
-    Cool:
-        "Everything suddenly feels very quiet.",
-
-    Bait:
-        "It was waiting for you to press this.",
-
-    Surge:
-        "Something just woke up."
-};
-
-
-/*
-    Every button receives a hidden number of
-    successful attempts.
-
-    Some buttons flee once.
-    Some flee twice.
-*/
-
-buttons.forEach((button, index) => {
-
-    button.dataset.clicks = "0";
-
-    button.addEventListener("click", () => {
-
-        let clicks =
-            parseInt(button.dataset.clicks);
+        p.className = "pixel";
 
         /*
-           Roughly half the time, the first click
-           makes the button flee.
+           Random starting position.
         */
 
-        if (
-            clicks === 0 &&
-            Math.random() < .55
-        ) {
+        const x = Math.random() * 300 - 150;
+        const y = Math.random() * 120 - 60;
 
-            button.dataset.clicks = "1";
-
-            flee(button);
-
-            return;
-        }
+        p.style.left = `${x + 150}px`;
+        p.style.top = `${y + 60}px`;
 
         /*
-           Occasionally it flees a second time.
+           Random delay.
         */
 
-        if (
-            clicks === 1 &&
-            Math.random() < .28
-        ) {
+        p.style.animationDelay =
+            `${Math.random() * 2}s`;
 
-            button.dataset.clicks = "2";
-
-            flee(button);
-
-            return;
-        }
-
-        /*
-           Actual activation.
-        */
-
-        activate(button);
-    });
-});
-
-
-/* ==================================================
-   FLEE
-================================================== */
-
-function flee(button) {
-
-    button.classList.add("flee");
-
-    setTimeout(() => {
-
-        button.classList.remove("flee");
-
-        moveButton(button);
-        changeButtonSize(button);
-
-    }, 300);
-}
-
-
-/* ==================================================
-   RANDOM POSITION
-================================================== */
-
-function moveButton(button) {
-
-    /*
-       Keep buttons away from the extreme edges
-       so they remain clickable.
-    */
-
-    const margin = 5;
-
-    const maxX =
-        window.innerWidth -
-        button.offsetWidth -
-        window.innerWidth * margin / 100;
-
-    const maxY =
-        window.innerHeight -
-        button.offsetHeight -
-        window.innerHeight * margin / 100;
-
-    const x =
-        window.innerWidth * margin / 100 +
-        Math.random() * (maxX - window.innerWidth * margin / 100);
-
-    const y =
-        window.innerHeight * margin / 100 +
-        Math.random() * (maxY - window.innerHeight * margin / 100);
-
-    button.style.left = x + "px";
-    button.style.top = y + "px";
-}
-
-
-/* ==================================================
-   RANDOM SIZE
-================================================== */
-
-function changeButtonSize(button) {
-
-    const size =
-        0.7 + Math.random() * 0.8;
-
-    button.style.transform =
-        `scale(${size}) rotate(${(Math.random() - .5) * 8}deg)`;
-
-    button.style.fontSize =
-        (16 + Math.random() * 12) + "px";
-
-    button.style.padding =
-        (7 + Math.random() * 9) +
-        "px " +
-        (14 + Math.random() * 18) +
-        "px";
-}
-
-
-/* ==================================================
-   ACTIVATION
-================================================== */
-
-function activate(button) {
-
-    const text =
-        responses[button.textContent.trim()] ||
-        "Something happened.";
-
-    showResponse(text);
-
-    /*
-       Reset the button's flee counter.
-    */
-
-    button.dataset.clicks = "0";
-
-    /*
-       Small visual reaction.
-    */
-
-    button.style.transform =
-        "scale(.85)";
-
-    setTimeout(() => {
-
-        button.style.transform = "";
-
-    }, 250);
-
-    /*
-       Clicking any button has a chance to make
-       another random button disappear/reappear.
-    */
-
-    if (Math.random() < .55) {
-
-        const other =
-            buttons[Math.floor(Math.random() * buttons.length)];
-
-        if (other !== button) {
-
-            other.classList.add("fading");
-
-            setTimeout(() => {
-
-                moveButton(other);
-                changeButtonSize(other);
-
-                other.classList.remove("fading");
-
-            }, 900);
-        }
+        pixels.appendChild(p);
     }
 }
 
 
-/* ==================================================
-   RESPONSE TEXT
-================================================== */
+/* =========================================================
+   MAIN SEQUENCE
+========================================================= */
 
-const response =
-    document.getElementById("response");
+function startExperience() {
 
-let responseTimer;
-
-function showResponse(text) {
-
-    clearTimeout(responseTimer);
-
-    response.textContent = text;
-
-    response.classList.add("show");
-
-    responseTimer =
-        setTimeout(() => {
-
-            response.classList.remove("show");
-
-        }, 2600);
-}
-
-
-/* ==================================================
-   RANDOM BUTTON TELEPORTATION
-================================================== */
-
-function randomButtonMovement() {
+    createPixels();
 
     /*
-       Choose a random button.
+       1. Black/blue introductory screen.
     */
 
-    const button =
-        buttons[Math.floor(Math.random() * buttons.length)];
+    setTimeout(() => {
 
-    /*
-       Only occasionally do anything, so the page
-       doesn't become impossible to use.
-    */
-
-    if (Math.random() < .65) {
-
-        button.classList.add("fading");
+        intro.style.opacity = "0";
 
         setTimeout(() => {
+            intro.style.visibility = "hidden";
+        }, 2200);
 
-            moveButton(button);
-            changeButtonSize(button);
+    }, 1800);
 
-            button.classList.remove("fading");
 
+    /*
+       2. Girl comes extremely close.
+    */
+
+    setTimeout(() => {
+
+        girl.style.opacity = "1";
+
+        girl.style.transform = "scale(1.35)";
+
+    }, 2800);
+
+
+    /*
+       3. Eye becomes visible.
+    */
+
+    setTimeout(() => {
+
+        eye.style.opacity = "1";
+
+        eye.style.transform =
+            "translate(-50%, -50%) scale(1)";
+
+    }, 5200);
+
+
+    /*
+       4. Hallucination.
+    */
+
+    setTimeout(() => {
+
+        hallucination.style.animation =
+            "hallucinate 4s ease-in-out forwards";
+
+        room.classList.add("final-shake");
+
+        setTimeout(() => {
+            room.classList.remove("final-shake");
         }, 700);
-    }
+
+    }, 8000);
+
+
+    /*
+       5. Close-up disappears.
+    */
+
+    setTimeout(() => {
+
+        girl.style.opacity = "0";
+
+        girl.style.transform = "scale(1)";
+
+        eye.style.opacity = "0";
+
+    }, 10500);
+
+
+    /*
+       6. Normal room returns.
+    */
+
+    setTimeout(() => {
+
+        questions.style.opacity = "1";
+
+    }, 11000);
+
+
+    /*
+       7. Pixels gather.
+    */
+
+    setTimeout(() => {
+
+        pixels.style.opacity = "1";
+
+    }, 11500);
+
+
+    /*
+       8. Message appears.
+    */
+
+    setTimeout(() => {
+
+        message.style.opacity = "1";
+
+    }, 13800);
+
+
+    /*
+       9. Controls become visible.
+    */
+
+    setTimeout(() => {
+
+        controls.style.opacity = "1";
+
+    }, 16000);
+
 }
 
 
-/*
-   Buttons wander every few seconds.
-*/
+/* =========================================================
+   RESTART
+========================================================= */
 
-setInterval(
-    randomButtonMovement,
-    3500 + Math.random() * 2500
-);
+function beginAgain() {
 
+    message.style.opacity = "0";
+    controls.style.opacity = "0";
 
-/* ==================================================
-   SUBTLE GIRL MOVEMENT
-================================================== */
+    pixels.style.opacity = "0";
 
-const girl =
-    document.getElementById("girl");
+    questions.style.opacity = "0";
 
-setInterval(() => {
+    hallucination.style.animation = "none";
 
-    const x =
-        (Math.random() - .5) * 5;
+    /*
+       Force browser to acknowledge reset.
+    */
 
-    const y =
-        (Math.random() - .5) * 4;
+    void hallucination.offsetWidth;
 
-    const r =
-        (Math.random() - .5) * 2;
-
-    girl.style.transform =
-        `translate(calc(-50% + ${x}px),
-                   calc(-50% + ${y}px))
-         rotate(${r}deg)`;
-
-}, 3000);
+    startExperience();
+}
 
 
-/* ==================================================
-   BLINK BUTTON SPECIAL EFFECT
-================================================== */
+/* =========================================================
+   QUESTION TOGGLE
+========================================================= */
 
-document.getElementById("b3")
-    .addEventListener("click", () => {
+function toggleQuestions() {
 
-        /*
-           Make the whole page briefly disappear
-           when "Blink" is successfully activated.
-        */
+    if (questions.style.opacity === "0") {
 
-        setTimeout(() => {
+        questions.style.opacity = "1";
 
-            main.style.filter = "brightness(.15)";
+    } else {
 
-            setTimeout(() => {
+        questions.style.opacity = "0";
 
-                main.style.filter = "brightness(1)";
+    }
 
-            }, 180);
-
-        }, 100);
-    });
+}
 
 
-/* ==================================================
-   OCCASIONAL EYE MOVEMENT
-================================================== */
+/* =========================================================
+   START
+========================================================= */
 
-const eye =
-    document.querySelector(".girl-eye");
+window.addEventListener("load", () => {
 
-setInterval(() => {
+    /*
+       Tiny delay makes the page feel intentional
+       instead of immediately starting.
+    */
 
-    eye.style.transform =
-        `translate(
-            ${(Math.random() - .5) * 7}px,
-            ${(Math.random() - .5) * 4}px
-        )`;
-
-}, 1800);
-
-
-/* ==================================================
-   RESIZE SAFETY
-================================================== */
-
-window.addEventListener("resize", () => {
-
-    buttons.forEach(button => {
-
-        const rect =
-            button.getBoundingClientRect();
-
-        if (
-            rect.right > window.innerWidth ||
-            rect.bottom > window.innerHeight
-        ) {
-            moveButton(button);
-        }
-
-    });
+    setTimeout(startExperience, 500);
 
 });
+
 </script>
 
 </body>
