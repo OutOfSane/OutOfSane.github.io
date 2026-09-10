@@ -1,15 +1,747 @@
-<!doctype html>
-<html lang="no">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Min portfolio</title>
-<style>body{font-family:system-ui,Segoe UI,Arial;margin:40px;max-width:720px}h1{font-size:2rem}a{color:#0a7}code{background:#eef;padding:2px 6px;border-radius:6px}</style>
-<h1>I can see you <em>and I will watch you sleep </em> 👋</h1>
-<p> <strong>GitHub Pages</strong>.</p>
-<h2>Prosjekter</h2>
-<ul>You can not shut this down
-  <li>Prosjekt 1 – <a href="#">lenke</a></li>
-  <li>Prosjekt 2 – <a href="#">lenke</a></li>
-</ul>
-<p>Kontakt meg: <code>epost@eksempel.no</code></p>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>THE THINGS INSIDE</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #050505;
+        color: #d8d8d8;
+        font-family: 'Share Tech Mono', monospace;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Background noise */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.08;
+        z-index: 100;
+        background-image:
+            repeating-radial-gradient(
+                circle at 0 0,
+                transparent 0,
+                #fff 1px,
+                transparent 2px
+            );
+        background-size: 5px 5px;
+    }
+
+    /* Red vignette */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 99;
+        background: radial-gradient(
+            circle,
+            transparent 35%,
+            rgba(80,0,0,0.18) 100%
+        );
+    }
+
+    header {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .intro {
+        max-width: 900px;
+    }
+
+    .warning {
+        color: #777;
+        font-size: 12px;
+        letter-spacing: 4px;
+        margin-bottom: 30px;
+        animation: flicker 4s infinite;
+    }
+
+    h1 {
+        font-family: 'Creepster', cursive;
+        font-size: clamp(70px, 13vw, 170px);
+        font-weight: normal;
+        color: #a30000;
+        letter-spacing: 8px;
+        text-shadow:
+            0 0 10px #300000,
+            4px 4px 0 #170000;
+        animation: titlePulse 5s infinite;
+    }
+
+    .subtitle {
+        margin: 20px auto 50px;
+        color: #aaa;
+        max-width: 600px;
+        line-height: 1.8;
+    }
+
+    .enter-button {
+        background: transparent;
+        color: #a30000;
+        border: 1px solid #700000;
+        padding: 16px 40px;
+        font-family: inherit;
+        letter-spacing: 4px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .enter-button:hover {
+        background: #700000;
+        color: white;
+        box-shadow: 0 0 30px #700000;
+    }
+
+    section {
+        padding: 100px 7%;
+        position: relative;
+    }
+
+    .section-title {
+        text-align: center;
+        font-family: 'Creepster', cursive;
+        font-size: 55px;
+        font-weight: normal;
+        color: #8d0000;
+        margin-bottom: 15px;
+    }
+
+    .section-description {
+        text-align: center;
+        color: #666;
+        max-width: 650px;
+        margin: 0 auto 60px;
+        line-height: 1.7;
+    }
+
+    .monsters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .monster {
+        min-height: 330px;
+        border: 1px solid #222;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(40,40,40,0.35),
+                rgba(5,5,5,0.95)
+            );
+        padding: 25px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: 0.4s;
+    }
+
+    .monster:hover {
+        transform: translateY(-8px);
+        border-color: #700000;
+        box-shadow: 0 15px 50px rgba(100,0,0,0.2);
+    }
+
+    .monster-number {
+        color: #500000;
+        font-size: 12px;
+        margin-bottom: 30px;
+    }
+
+    .monster-symbol {
+        font-size: 65px;
+        text-align: center;
+        margin: 15px 0 30px;
+        filter: grayscale(1);
+        transition: 0.4s;
+    }
+
+    .monster:hover .monster-symbol {
+        filter: grayscale(0);
+        transform: scale(1.08);
+    }
+
+    .monster h3 {
+        text-align: center;
+        color: #bbb;
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+
+    .monster p {
+        text-align: center;
+        color: #555;
+        font-size: 12px;
+        margin-top: 12px;
+        line-height: 1.6;
+    }
+
+    /* Modal */
+
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.94);
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal.active {
+        display: flex;
+        animation: appear 0.3s ease;
+    }
+
+    .modal-content {
+        width: min(850px, 100%);
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid #4d0000;
+        background: #080808;
+        padding: 50px;
+        box-shadow: 0 0 100px rgba(100,0,0,0.2);
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        right: 25px;
+        top: 20px;
+        color: #666;
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: #b00000;
+    }
+
+    .modal-symbol {
+        font-size: 100px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .modal h2 {
+        text-align: center;
+        font-family: 'Creepster', cursive;
+        font-size: 60px;
+        font-weight: normal;
+        color: #a00000;
+        margin-bottom: 25px;
+    }
+
+    .modal .quote {
+        color: #777;
+        text-align: center;
+        font-style: italic;
+        margin-bottom: 35px;
+        line-height: 1.7;
+    }
+
+    .description {
+        color: #aaa;
+        line-height: 1.9;
+        margin-bottom: 30px;
+    }
+
+    .experience {
+        border-left: 2px solid #650000;
+        padding: 20px;
+        background: #0d0d0d;
+        color: #888;
+        line-height: 1.8;
+        margin-bottom: 30px;
+    }
+
+    .encounter-button {
+        display: block;
+        margin: auto;
+        background: #650000;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-family: inherit;
+        cursor: pointer;
+        letter-spacing: 2px;
+    }
+
+    .encounter-button:hover {
+        background: #a00000;
+    }
+
+    .result {
+        margin-top: 30px;
+        text-align: center;
+        color: #a00000;
+        min-height: 25px;
+    }
+
+    footer {
+        border-top: 1px solid #151515;
+        padding: 60px 20px;
+        text-align: center;
+        color: #444;
+        line-height: 2;
+        font-size: 12px;
+    }
+
+    footer strong {
+        color: #700000;
+    }
+
+    @keyframes flicker {
+        0%, 19%, 21%, 63%, 64%, 100% {
+            opacity: 1;
+        }
+        20%, 62% {
+            opacity: 0.3;
+        }
+    }
+
+    @keyframes titlePulse {
+        0%, 100% {
+            text-shadow: 0 0 10px #300000;
+        }
+        50% {
+            text-shadow:
+                0 0 30px #700000,
+                0 0 60px #300000;
+        }
+    }
+
+    @keyframes appear {
+        from {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .shake {
+        animation: shake 0.15s linear 3;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(0); }
+        25% { transform: translate(5px, -3px); }
+        50% { transform: translate(-5px, 3px); }
+        75% { transform: translate(3px, 2px); }
+        100% { transform: translate(0); }
+    }
+
+    @media (max-width: 600px) {
+        .modal-content {
+            padding: 30px 20px;
+        }
+
+        .modal h2 {
+            font-size: 45px;
+        }
+
+        section {
+            padding: 70px 20px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="intro">
+
+        <div class="warning">
+            ARCHIVE // PSYCHOLOGICAL HORROR // FILE 001
+        </div>
+
+        <h1>THE THINGS<br>INSIDE</h1>
+
+        <p class="subtitle">
+            Some monsters don't live under the bed.
+            Some live behind your eyes.
+            <br><br>
+            <em>Click carefully.</em>
+        </p>
+
+        <button class="enter-button"
+                onclick="document.getElementById('archive').scrollIntoView({behavior:'smooth'})">
+            ENTER THE ARCHIVE
+        </button>
+
+    </div>
+</header>
+
+
+<section id="archive">
+
+    <h2 class="section-title">THE ARCHIVE</h2>
+
+    <p class="section-description">
+        Six entities have been documented.
+        Each represents a different psychological experience.
+        They are not the illnesses themselves — they are fictional
+        manifestations of what those experiences can feel like.
+    </p>
+
+    <div class="monsters">
+
+        <div class="monster"
+             onclick="openMonster('anxiety')">
+            <div class="monster-number">ENTITY 001</div>
+            <div class="monster-symbol">👁</div>
+            <h3>THE WATCHER</h3>
+            <p>It sees every possible disaster.</p>
+        </div>
+
+        <div class="monster"
+             onclick="openMonster('depression')">
+            <div class="monster-number">ENTITY 002</div>
+            <div class="monster-symbol">🕳</div>
+            <h3>THE HOLLOW</h3>
+            <p>It doesn't hurt you. It removes everything that once mattered.</p>
+        </div>
+
+        <div class="monster"
+             onclick="openMonster('ocd')">
+            <div class="monster-number">ENTITY 003</div>
+            <div class="monster-symbol">🔁</div>
+            <h3>THE LOOP</h3>
+            <p>It asks the same question forever.</p>
+        </div>
+
+        <div class="monster"
+             onclick="openMonster('ptsd')">
+            <div class="monster-number">ENTITY 004</div>
+            <div class="monster-symbol">📼</div>
+            <h3>THE ECHO</h3>
+            <p>It knows how to make yesterday happen again.</p>
+        </div>
+
+        <div class="monster"
+             onclick="openMonster('insomnia')">
+            <div class="monster-number">ENTITY 005</div>
+            <div class="monster-symbol">🌑</div>
+            <h3>THE WAKEFUL</h3>
+            <p>It waits beside the bed until morning.</p>
+        </div>
+
+        <div class="monster"
+             onclick="openMonster('dissociation')">
+            <div class="monster-number">ENTITY 006</div>
+            <div class="monster-symbol">🪞</div>
+            <h3>THE MIRROR</h3>
+            <p>It makes everything feel slightly unreal.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="monsterModal">
+
+    <div class="modal-content">
+
+        <div class="close" onclick="closeMonster()">×</div>
+
+        <div class="modal-symbol" id="modalSymbol"></div>
+
+        <h2 id="modalTitle"></h2>
+
+        <div class="quote" id="modalQuote"></div>
+
+        <div class="description" id="modalDescription"></div>
+
+        <div class="experience" id="modalExperience"></div>
+
+        <button class="encounter-button" onclick="encounter()">
+            APPROACH THE ENTITY
+        </button>
+
+        <div class="result" id="result"></div>
+
+    </div>
+
+</div>
+
+
+<footer>
+
+    <strong>THE THINGS INSIDE</strong><br>
+
+    A fictional psychological-horror project.<br>
+
+    The entities portrayed here are metaphors and are not
+    representations of people with mental illnesses.
+
+    <br><br>
+
+    If psychological themes in this website are personally difficult,
+    step away and take care of yourself.
+
+</footer>
+
+
+<script>
+
+const monsters = {
+
+    anxiety: {
+        symbol: "👁",
+        title: "THE WATCHER",
+        quote: "\"Something is about to happen.\"",
+        description:
+            "The Watcher represents the experience of anxiety: " +
+            "the feeling that danger is approaching even when " +
+            "you cannot identify what the danger is.",
+        experience:
+            "It never sleeps. It checks the door. Then checks it again. " +
+            "Every heartbeat becomes evidence. Every silence becomes a warning. " +
+            "The Watcher doesn't need to attack. It only needs to convince you " +
+            "that something terrible is coming.",
+        responses: [
+            "THE WATCHER HAS NOTICED YOU.",
+            "You look behind you. Nothing is there.",
+            "Your heart beats faster.",
+            "The Watcher smiles.",
+            "For once, you tell it: \"Maybe. But not now.\""
+        ]
+    },
+
+    depression: {
+        symbol: "🕳",
+        title: "THE HOLLOW",
+        quote: "\"You used to care about this.\"",
+        description:
+            "The Hollow represents depressive experiences such as " +
+            "emptiness, loss of motivation, emotional numbness, and " +
+            "the feeling that things which once mattered have become distant.",
+        experience:
+            "The Hollow does not scream. It whispers. " +
+            "It sits beside you while the world continues without you. " +
+            "It makes your favorite songs sound distant and turns simple " +
+            "tasks into enormous walls.",
+        responses: [
+            "THE HOLLOW STARES BACK.",
+            "You remember something you used to love.",
+            "The Hollow tells you it doesn't matter.",
+            "You don't believe it completely.",
+            "A tiny crack appears in the darkness."
+        ]
+    },
+
+    ocd: {
+        symbol: "🔁",
+        title: "THE LOOP",
+        quote: "\"But what if?\"",
+        description:
+            "The Loop represents obsessive-compulsive experiences, " +
+            "particularly intrusive thoughts and the exhausting cycle " +
+            "of doubt, anxiety, and compulsive attempts to gain certainty.",
+        experience:
+            "The Loop asks a question. You answer. " +
+            "It asks again. You answer again. " +
+            "No answer is ever perfect enough. " +
+            "The monster isn't the thought itself. " +
+            "It's the endless demand to make uncertainty disappear.",
+        responses: [
+            "THE LOOP HAS A QUESTION.",
+            "\"Are you sure?\"",
+            "You answer.",
+            "\"Are you REALLY sure?\"",
+            "You decide you don't need to answer."
+        ]
+    },
+
+    ptsd: {
+        symbol: "📼",
+        title: "THE ECHO",
+        quote: "\"This happened before.\"",
+        description:
+            "The Echo represents trauma-related experiences such as " +
+            "intrusive memories, flashbacks, hypervigilance, and the sense " +
+            "that something from the past is suddenly happening again.",
+        experience:
+            "The Echo lives in yesterday. " +
+            "Sometimes it stays quiet for months. " +
+            "Then a sound, smell, place, or word opens the door. " +
+            "For a moment, the distance between then and now disappears.",
+        responses: [
+            "THE ECHO PLAYS.",
+            "For a moment, you are somewhere else.",
+            "Then you notice your feet on the floor.",
+            "You name five things you can see.",
+            "The recording becomes quieter."
+        ]
+    },
+
+    insomnia: {
+        symbol: "🌑",
+        title: "THE WAKEFUL",
+        quote: "\"You have 4 hours and 17 minutes left.\"",
+        description:
+            "The Wakeful represents the exhausting experience of " +
+            "insomnia and the anxiety that can surround the inability " +
+            "to sleep.",
+        experience:
+            "The room is dark. Your body is tired. " +
+            "Your mind refuses to follow. " +
+            "The clock becomes an enemy. " +
+            "Every passing minute feels louder than the one before.",
+        responses: [
+            "THE CLOCK MOVES.",
+            "02:17",
+            "03:04",
+            "04:31",
+            "You stop looking at the clock."
+        ]
+    },
+
+    dissociation: {
+        symbol: "🪞",
+        title: "THE MIRROR",
+        quote: "\"Do you feel real?\"",
+        description:
+            "The Mirror represents dissociative experiences such as " +
+            "depersonalization and derealization — moments when yourself " +
+            "or the surrounding world can feel strangely distant or unreal.",
+        experience:
+            "The Mirror copies everything perfectly. " +
+            "Your face. Your movements. Your voice. " +
+            "But something feels wrong. " +
+            "The room looks like a room from a dream you haven't finished waking from.",
+        responses: [
+            "THE MIRROR BLINKS.",
+            "You didn't.",
+            "The reflection smiles.",
+            "You touch the glass.",
+            "Cold. Solid. Real."
+        ]
+    }
+};
+
+
+let currentMonster = null;
+
+
+function openMonster(type) {
+
+    currentMonster = monsters[type];
+
+    document.getElementById("modalSymbol").textContent =
+        currentMonster.symbol;
+
+    document.getElementById("modalTitle").textContent =
+        currentMonster.title;
+
+    document.getElementById("modalQuote").textContent =
+        currentMonster.quote;
+
+    document.getElementById("modalDescription").textContent =
+        currentMonster.description;
+
+    document.getElementById("modalExperience").textContent =
+        currentMonster.experience;
+
+    document.getElementById("result").textContent = "";
+
+    document.getElementById("monsterModal")
+        .classList.add("active");
+
+    document.body.classList.add("shake");
+
+    setTimeout(() => {
+        document.body.classList.remove("shake");
+    }, 500);
+}
+
+
+function closeMonster() {
+
+    document.getElementById("monsterModal")
+        .classList.remove("active");
+
+    currentMonster = null;
+}
+
+
+function encounter() {
+
+    if (!currentMonster) return;
+
+    const result = document.getElementById("result");
+
+    const responses = currentMonster.responses;
+
+    result.textContent =
+        responses[Math.floor(Math.random() * responses.length)];
+
+    document.querySelector(".modal-content")
+        .classList.add("shake");
+
+    setTimeout(() => {
+        document.querySelector(".modal-content")
+            .classList.remove("shake");
+    }, 500);
+}
+
+
+/* Close modal when clicking outside it */
+
+document.getElementById("monsterModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+            closeMonster();
+        }
+
+    });
+
+
+/* Escape key */
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+        closeMonster();
+    }
+
+});
+
+</script>
+
+</body>
 </html>
+```
