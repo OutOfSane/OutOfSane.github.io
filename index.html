@@ -4,742 +4,1135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>THE THINGS INSIDE</title>
+<title>I Lost My Name</title>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600&display=swap');
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        background: #050505;
-        color: #d8d8d8;
-        font-family: 'Share Tech Mono', monospace;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
+:root {
+    --cream: #f8f1e8;
+    --ink: #62596c;
+    --pink: #e9bfd0;
+    --lavender: #cfc9e9;
+    --blue: #c4d8e8;
+    --green: #c8dfd1;
+    --yellow: #ead9a9;
+}
 
-    /* Background noise */
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.08;
-        z-index: 100;
-        background-image:
-            repeating-radial-gradient(
-                circle at 0 0,
-                transparent 0,
-                #fff 1px,
-                transparent 2px
-            );
-        background-size: 5px 5px;
-    }
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
-    /* Red vignette */
-    body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 99;
-        background: radial-gradient(
-            circle,
-            transparent 35%,
-            rgba(80,0,0,0.18) 100%
+body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "Quicksand", sans-serif;
+}
+
+/* --------------------------------------------------
+   INTRO
+-------------------------------------------------- */
+
+#intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background:
+        radial-gradient(circle at center, #fffaf3 0%, #f7eee3 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition:
+        opacity 1.5s ease,
+        filter 1.5s ease,
+        transform 1.5s ease;
+}
+
+#introGirl {
+    position: relative;
+    width: 180px;
+    height: 280px;
+    transition:
+        transform 1.8s cubic-bezier(.2,.8,.2,1),
+        filter 1s;
+}
+
+.intro-body {
+    position: absolute;
+    bottom: 0;
+    left: 25px;
+    width: 130px;
+    height: 155px;
+    border-radius: 55% 55% 25% 25%;
+    background: #d9b8b2;
+    box-shadow: 0 15px 35px rgba(70,50,70,.15);
+}
+
+.intro-head {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 140px;
+    height: 155px;
+    border-radius: 50%;
+    background: #e3b9a8;
+}
+
+.intro-hair {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 4px;
+    width: 170px;
+    height: 210px;
+    border-radius: 55% 55% 40% 45%;
+    background:
+        repeating-linear-gradient(
+            75deg,
+            #4d4650 0px,
+            #59515b 5px,
+            #433d47 10px
         );
+    box-shadow: 0 12px 25px rgba(40,30,40,.2);
+    clip-path: polygon(
+        8% 0,
+        90% 0,
+        100% 20%,
+        94% 65%,
+        87% 100%,
+        70% 83%,
+        58% 100%,
+        45% 82%,
+        31% 100%,
+        20% 77%,
+        8% 90%,
+        0 45%
+    );
+}
+
+.eye {
+    position: absolute;
+    z-index: 5;
+    top: 91px;
+    left: 104px;
+    width: 27px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #39333e;
+    box-shadow: 0 0 10px rgba(255,255,255,.8);
+}
+
+.eye::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 18px;
+    border-radius: 50%;
+    background: #17151b;
+    left: 6px;
+    top: 4px;
+}
+
+.plush {
+    position: absolute;
+    z-index: 6;
+    bottom: 40px;
+    left: 47px;
+    width: 85px;
+    height: 95px;
+    border-radius: 45% 45% 35% 35%;
+    background: #c7aeb0;
+}
+
+.plush::before,
+.plush::after {
+    content: "";
+    position: absolute;
+    top: -18px;
+    width: 30px;
+    height: 45px;
+    border-radius: 50%;
+    background: #c7aeb0;
+}
+
+.plush::before {
+    left: 4px;
+    transform: rotate(-20deg);
+}
+
+.plush::after {
+    right: 4px;
+    transform: rotate(20deg);
+}
+
+.intro-text {
+    position: absolute;
+    bottom: 9%;
+    font-family: "Patrick Hand", cursive;
+    font-size: 18px;
+    opacity: .35;
+    letter-spacing: 2px;
+}
+
+#intro.close {
+    transform: scale(1.25);
+}
+
+#intro.close #introGirl {
+    transform: scale(3.8);
+}
+
+#intro.glitch {
+    animation: hallucination .8s steps(2);
+}
+
+@keyframes hallucination {
+    0%   { filter: blur(0); transform: translate(0); }
+    20%  { filter: blur(4px) hue-rotate(20deg); transform: translate(-8px, 3px); }
+    35%  { filter: blur(0) contrast(1.5); transform: translate(9px, -5px); }
+    55%  { filter: blur(7px); transform: translate(-5px, 4px); }
+    70%  { filter: invert(.04); transform: translate(5px, 0); }
+    100% { filter: blur(0); transform: translate(0); }
+}
+
+/* --------------------------------------------------
+   MAIN PAGE
+-------------------------------------------------- */
+
+#main {
+    position: fixed;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s ease;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.8), transparent 35%),
+        linear-gradient(135deg, #f9f1e8, #f4ecdf);
+}
+
+#main.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* paper grain */
+
+#main::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .12;
+    background-image:
+        radial-gradient(#777 0.6px, transparent .6px);
+    background-size: 5px 5px;
+    mix-blend-mode: multiply;
+}
+
+/* --------------------------------------------------
+   BACKGROUND QUESTIONS
+-------------------------------------------------- */
+
+.question {
+    position: absolute;
+    font-family: "Patrick Hand", cursive;
+    font-size: clamp(16px, 2vw, 25px);
+    letter-spacing: 1px;
+    opacity: .09;
+    transform: rotate(var(--rotation));
+    user-select: none;
+    white-space: nowrap;
+    animation: questionFade 8s ease-in-out infinite alternate;
+}
+
+@keyframes questionFade {
+    from { opacity: .045; }
+    to   { opacity: .13; }
+}
+
+.q1 { top: 6%; left: 4%; --rotation: -3deg; }
+.q2 { top: 15%; right: 7%; --rotation: 4deg; }
+.q3 { top: 42%; left: 3%; --rotation: -6deg; }
+.q4 { top: 51%; right: 3%; --rotation: 5deg; }
+.q5 { bottom: 13%; left: 7%; --rotation: -4deg; }
+.q6 { bottom: 5%; right: 9%; --rotation: 3deg; }
+.q7 { top: 29%; left: 21%; --rotation: 5deg; }
+.q8 { bottom: 27%; right: 18%; --rotation: -7deg; }
+.q9 { top: 4%; left: 45%; --rotation: 2deg; }
+.q10 { bottom: 3%; left: 40%; --rotation: -3deg; }
+
+/* --------------------------------------------------
+   PIXEL MESSAGE
+-------------------------------------------------- */
+
+#message {
+    position: absolute;
+    z-index: 20;
+    top: 9%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    text-align: center;
+    font-family: "Patrick Hand", cursive;
+    font-size: clamp(18px, 2.2vw, 28px);
+    letter-spacing: 2px;
+}
+
+.pixel {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin: 2px;
+    background: #7c7081;
+    opacity: 0;
+    animation: pixelAppear .8s forwards;
+}
+
+@keyframes pixelAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0);
+    }
+    to {
+        opacity: .5;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#messageText {
+    opacity: 0;
+    transition: opacity 1.5s;
+}
+
+#messageText.show {
+    opacity: .72;
+}
+
+/* --------------------------------------------------
+   GIRL
+-------------------------------------------------- */
+
+#girl {
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 270px;
+    transition: transform 1s ease;
+}
+
+.girl-body {
+    position: absolute;
+    bottom: 15px;
+    left: 29px;
+    width: 125px;
+    height: 135px;
+    border-radius: 55% 55% 30% 30%;
+    background: #d8b7b2;
+    box-shadow: 0 15px 25px rgba(70,50,70,.12);
+}
+
+.girl-head {
+    position: absolute;
+    top: 25px;
+    left: 23px;
+    width: 135px;
+    height: 150px;
+    border-radius: 50%;
+    background: #e1b8a6;
+}
+
+.girl-hair {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 3px;
+    width: 173px;
+    height: 215px;
+    border-radius: 50%;
+    background:
+        repeating-linear-gradient(
+            75deg,
+            #514952,
+            #514952 5px,
+            #433d46 9px
+        );
+    clip-path: polygon(
+        10% 0,
+        92% 0,
+        100% 35%,
+        93% 100%,
+        78% 85%,
+        66% 100%,
+        53% 83%,
+        41% 100%,
+        28% 80%,
+        14% 100%,
+        0 62%
+    );
+}
+
+.girl-eye {
+    position: absolute;
+    z-index: 5;
+    left: 105px;
+    top: 96px;
+    width: 25px;
+    height: 30px;
+    border: 3px solid #3d3741;
+    border-radius: 50%;
+    background: white;
+}
+
+.girl-eye::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    width: 8px;
+    height: 18px;
+    border-radius: 50%;
+    background: #17151a;
+}
+
+.bunny {
+    position: absolute;
+    z-index: 6;
+    bottom: 33px;
+    left: 48px;
+    width: 82px;
+    height: 88px;
+    border-radius: 45%;
+    background: #c8b1b0;
+}
+
+.bunny::before,
+.bunny::after {
+    content: "";
+    position: absolute;
+    top: -23px;
+    width: 26px;
+    height: 48px;
+    background: #c8b1b0;
+    border-radius: 50%;
+}
+
+.bunny::before {
+    left: 5px;
+    transform: rotate(-17deg);
+}
+
+.bunny::after {
+    right: 5px;
+    transform: rotate(17deg);
+}
+
+.ground {
+    position: absolute;
+    bottom: 0;
+    left: -45px;
+    width: 270px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgba(130,115,125,.1);
+}
+
+/* --------------------------------------------------
+   BUTTONS
+-------------------------------------------------- */
+
+#buttons {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+}
+
+.horror-button {
+    position: absolute;
+    border: 1px solid rgba(105,90,110,.25);
+    background: rgba(255,255,255,.24);
+    color: #665d70;
+    font-family: "Patrick Hand", cursive;
+    font-size: 21px;
+    letter-spacing: 1.5px;
+    padding: 11px 25px;
+    border-radius: 40px;
+    cursor: pointer;
+    backdrop-filter: blur(3px);
+    box-shadow: 0 5px 15px rgba(100,80,100,.06);
+    transition:
+        left .7s cubic-bezier(.2,.8,.2,1),
+        top .7s cubic-bezier(.2,.8,.2,1),
+        transform .2s,
+        opacity .8s,
+        width .5s,
+        padding .5s;
+}
+
+.horror-button:hover {
+    transform: scale(1.08) rotate(-2deg);
+    background: rgba(255,255,255,.45);
+}
+
+.horror-button.flee {
+    animation: flee .55s ease;
+}
+
+@keyframes flee {
+    0% { transform: scale(1); }
+    30% { transform: scale(.8) translateX(15px); }
+    100% { transform: scale(1); }
+}
+
+.horror-button.fading {
+    opacity: .13;
+}
+
+#b0 { left: 19%; top: 21%; background: rgba(239,199,213,.25); }
+#b1 { left: 67%; top: 20%; background: rgba(213,207,235,.25); }
+#b2 { left: 24%; top: 39%; background: rgba(201,216,235,.25); }
+#b3 { left: 59%; top: 38%; background: rgba(202,225,210,.25); }
+#b4 { left: 12%; top: 57%; background: rgba(238,219,174,.25); }
+#b5 { left: 70%; top: 53%; background: rgba(240,190,208,.25); }
+#b6 { left: 27%; top: 69%; background: rgba(238,195,210,.25); }
+#b7 { left: 63%; top: 67%; background: rgba(195,213,234,.25); }
+#b8 { left: 35%; top: 83%; background: rgba(210,204,233,.25); }
+#b9 { left: 53%; top: 82%; background: rgba(239,200,177,.25); }
+
+/* --------------------------------------------------
+   CLICK RESPONSE
+-------------------------------------------------- */
+
+#response {
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Patrick Hand", cursive;
+    font-size: 25px;
+    letter-spacing: 2px;
+    color: #5c5262;
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+    transition: opacity .7s;
+}
+
+#response.show {
+    opacity: .8;
+}
+
+/* --------------------------------------------------
+   MOBILE
+-------------------------------------------------- */
+
+@media (max-width: 650px) {
+
+    .question {
+        font-size: 14px;
     }
 
-    header {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 40px 20px;
-        position: relative;
+    #girl {
+        transform: translate(-50%, -50%) scale(.75);
     }
 
-    .intro {
-        max-width: 900px;
+    .horror-button {
+        font-size: 17px;
+        padding: 8px 17px;
     }
 
-    .warning {
-        color: #777;
-        font-size: 12px;
-        letter-spacing: 4px;
-        margin-bottom: 30px;
-        animation: flicker 4s infinite;
+    #message {
+        width: 280px;
+        top: 7%;
     }
-
-    h1 {
-        font-family: 'Creepster', cursive;
-        font-size: clamp(70px, 13vw, 170px);
-        font-weight: normal;
-        color: #a30000;
-        letter-spacing: 8px;
-        text-shadow:
-            0 0 10px #300000,
-            4px 4px 0 #170000;
-        animation: titlePulse 5s infinite;
-    }
-
-    .subtitle {
-        margin: 20px auto 50px;
-        color: #aaa;
-        max-width: 600px;
-        line-height: 1.8;
-    }
-
-    .enter-button {
-        background: transparent;
-        color: #a30000;
-        border: 1px solid #700000;
-        padding: 16px 40px;
-        font-family: inherit;
-        letter-spacing: 4px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .enter-button:hover {
-        background: #700000;
-        color: white;
-        box-shadow: 0 0 30px #700000;
-    }
-
-    section {
-        padding: 100px 7%;
-        position: relative;
-    }
-
-    .section-title {
-        text-align: center;
-        font-family: 'Creepster', cursive;
-        font-size: 55px;
-        font-weight: normal;
-        color: #8d0000;
-        margin-bottom: 15px;
-    }
-
-    .section-description {
-        text-align: center;
-        color: #666;
-        max-width: 650px;
-        margin: 0 auto 60px;
-        line-height: 1.7;
-    }
-
-    .monsters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 25px;
-        max-width: 1200px;
-        margin: auto;
-    }
-
-    .monster {
-        min-height: 330px;
-        border: 1px solid #222;
-        background:
-            linear-gradient(
-                145deg,
-                rgba(40,40,40,0.35),
-                rgba(5,5,5,0.95)
-            );
-        padding: 25px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        transition: 0.4s;
-    }
-
-    .monster:hover {
-        transform: translateY(-8px);
-        border-color: #700000;
-        box-shadow: 0 15px 50px rgba(100,0,0,0.2);
-    }
-
-    .monster-number {
-        color: #500000;
-        font-size: 12px;
-        margin-bottom: 30px;
-    }
-
-    .monster-symbol {
-        font-size: 65px;
-        text-align: center;
-        margin: 15px 0 30px;
-        filter: grayscale(1);
-        transition: 0.4s;
-    }
-
-    .monster:hover .monster-symbol {
-        filter: grayscale(0);
-        transform: scale(1.08);
-    }
-
-    .monster h3 {
-        text-align: center;
-        color: #bbb;
-        font-size: 20px;
-        letter-spacing: 2px;
-    }
-
-    .monster p {
-        text-align: center;
-        color: #555;
-        font-size: 12px;
-        margin-top: 12px;
-        line-height: 1.6;
-    }
-
-    /* Modal */
-
-    .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.94);
-        z-index: 200;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .modal.active {
-        display: flex;
-        animation: appear 0.3s ease;
-    }
-
-    .modal-content {
-        width: min(850px, 100%);
-        max-height: 90vh;
-        overflow-y: auto;
-        border: 1px solid #4d0000;
-        background: #080808;
-        padding: 50px;
-        box-shadow: 0 0 100px rgba(100,0,0,0.2);
-        position: relative;
-    }
-
-    .close {
-        position: absolute;
-        right: 25px;
-        top: 20px;
-        color: #666;
-        font-size: 25px;
-        cursor: pointer;
-    }
-
-    .close:hover {
-        color: #b00000;
-    }
-
-    .modal-symbol {
-        font-size: 100px;
-        text-align: center;
-        margin-bottom: 15px;
-    }
-
-    .modal h2 {
-        text-align: center;
-        font-family: 'Creepster', cursive;
-        font-size: 60px;
-        font-weight: normal;
-        color: #a00000;
-        margin-bottom: 25px;
-    }
-
-    .modal .quote {
-        color: #777;
-        text-align: center;
-        font-style: italic;
-        margin-bottom: 35px;
-        line-height: 1.7;
-    }
-
-    .description {
-        color: #aaa;
-        line-height: 1.9;
-        margin-bottom: 30px;
-    }
-
-    .experience {
-        border-left: 2px solid #650000;
-        padding: 20px;
-        background: #0d0d0d;
-        color: #888;
-        line-height: 1.8;
-        margin-bottom: 30px;
-    }
-
-    .encounter-button {
-        display: block;
-        margin: auto;
-        background: #650000;
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        font-family: inherit;
-        cursor: pointer;
-        letter-spacing: 2px;
-    }
-
-    .encounter-button:hover {
-        background: #a00000;
-    }
-
-    .result {
-        margin-top: 30px;
-        text-align: center;
-        color: #a00000;
-        min-height: 25px;
-    }
-
-    footer {
-        border-top: 1px solid #151515;
-        padding: 60px 20px;
-        text-align: center;
-        color: #444;
-        line-height: 2;
-        font-size: 12px;
-    }
-
-    footer strong {
-        color: #700000;
-    }
-
-    @keyframes flicker {
-        0%, 19%, 21%, 63%, 64%, 100% {
-            opacity: 1;
-        }
-        20%, 62% {
-            opacity: 0.3;
-        }
-    }
-
-    @keyframes titlePulse {
-        0%, 100% {
-            text-shadow: 0 0 10px #300000;
-        }
-        50% {
-            text-shadow:
-                0 0 30px #700000,
-                0 0 60px #300000;
-        }
-    }
-
-    @keyframes appear {
-        from {
-            opacity: 0;
-            transform: scale(0.96);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    .shake {
-        animation: shake 0.15s linear 3;
-    }
-
-    @keyframes shake {
-        0% { transform: translate(0); }
-        25% { transform: translate(5px, -3px); }
-        50% { transform: translate(-5px, 3px); }
-        75% { transform: translate(3px, 2px); }
-        100% { transform: translate(0); }
-    }
-
-    @media (max-width: 600px) {
-        .modal-content {
-            padding: 30px 20px;
-        }
-
-        .modal h2 {
-            font-size: 45px;
-        }
-
-        section {
-            padding: 70px 20px;
-        }
-    }
+}
 </style>
 </head>
 
 <body>
 
-<header>
-    <div class="intro">
+<!-- ================================================
+     INTRO
+================================================ -->
 
-        <div class="warning">
-            ARCHIVE // PSYCHOLOGICAL HORROR // FILE 001
-        </div>
+<section id="intro">
 
-        <h1>THE THINGS<br>INSIDE</h1>
+    <div id="introGirl">
 
-        <p class="subtitle">
-            Some monsters don't live under the bed.
-            Some live behind your eyes.
-            <br><br>
-            <em>Click carefully.</em>
-        </p>
+        <div class="intro-head"></div>
+        <div class="intro-body"></div>
 
-        <button class="enter-button"
-                onclick="document.getElementById('archive').scrollIntoView({behavior:'smooth'})">
-            ENTER THE ARCHIVE
-        </button>
+        <div class="intro-hair"></div>
+
+        <div class="eye"></div>
+
+        <div class="plush"></div>
 
     </div>
-</header>
 
-
-<section id="archive">
-
-    <h2 class="section-title">THE ARCHIVE</h2>
-
-    <p class="section-description">
-        Six entities have been documented.
-        Each represents a different psychological experience.
-        They are not the illnesses themselves — they are fictional
-        manifestations of what those experiences can feel like.
-    </p>
-
-    <div class="monsters">
-
-        <div class="monster"
-             onclick="openMonster('anxiety')">
-            <div class="monster-number">ENTITY 001</div>
-            <div class="monster-symbol">👁</div>
-            <h3>THE WATCHER</h3>
-            <p>It sees every possible disaster.</p>
-        </div>
-
-        <div class="monster"
-             onclick="openMonster('depression')">
-            <div class="monster-number">ENTITY 002</div>
-            <div class="monster-symbol">🕳</div>
-            <h3>THE HOLLOW</h3>
-            <p>It doesn't hurt you. It removes everything that once mattered.</p>
-        </div>
-
-        <div class="monster"
-             onclick="openMonster('ocd')">
-            <div class="monster-number">ENTITY 003</div>
-            <div class="monster-symbol">🔁</div>
-            <h3>THE LOOP</h3>
-            <p>It asks the same question forever.</p>
-        </div>
-
-        <div class="monster"
-             onclick="openMonster('ptsd')">
-            <div class="monster-number">ENTITY 004</div>
-            <div class="monster-symbol">📼</div>
-            <h3>THE ECHO</h3>
-            <p>It knows how to make yesterday happen again.</p>
-        </div>
-
-        <div class="monster"
-             onclick="openMonster('insomnia')">
-            <div class="monster-number">ENTITY 005</div>
-            <div class="monster-symbol">🌑</div>
-            <h3>THE WAKEFUL</h3>
-            <p>It waits beside the bed until morning.</p>
-        </div>
-
-        <div class="monster"
-             onclick="openMonster('dissociation')">
-            <div class="monster-number">ENTITY 006</div>
-            <div class="monster-symbol">🪞</div>
-            <h3>THE MIRROR</h3>
-            <p>It makes everything feel slightly unreal.</p>
-        </div>
-
+    <div class="intro-text">
+        ...are you still there?
     </div>
 
 </section>
 
 
-<!-- MODAL -->
+<!-- ================================================
+     MAIN
+================================================ -->
 
-<div class="modal" id="monsterModal">
+<main id="main">
 
-    <div class="modal-content">
+    <!-- barely readable thoughts -->
 
-        <div class="close" onclick="closeMonster()">×</div>
+    <div class="question q1">what if I'm not real?</div>
+    <div class="question q2">what if someone is watching?</div>
+    <div class="question q3">does anyone actually care?</div>
+    <div class="question q4">why does everything feel wrong?</div>
+    <div class="question q5">what if I disappear?</div>
+    <div class="question q6">is this all there is?</div>
+    <div class="question q7">am I safe?</div>
+    <div class="question q8">can you hear me?</div>
+    <div class="question q9">is there anyone out there?</div>
+    <div class="question q10">why am I so tired?</div>
 
-        <div class="modal-symbol" id="modalSymbol"></div>
 
-        <h2 id="modalTitle"></h2>
+    <!-- pixel message -->
 
-        <div class="quote" id="modalQuote"></div>
+    <div id="message">
 
-        <div class="description" id="modalDescription"></div>
+        <div id="pixels"></div>
 
-        <div class="experience" id="modalExperience"></div>
-
-        <button class="encounter-button" onclick="encounter()">
-            APPROACH THE ENTITY
-        </button>
-
-        <div class="result" id="result"></div>
+        <div id="messageText">
+            I lost my name.<br>
+            Find it. Please..?
+        </div>
 
     </div>
 
-</div>
+
+    <!-- girl -->
+
+    <div id="girl">
+
+        <div class="girl-head"></div>
+        <div class="girl-body"></div>
+
+        <div class="girl-hair"></div>
+
+        <div class="girl-eye"></div>
+
+        <div class="bunny"></div>
+
+        <div class="ground"></div>
+
+    </div>
 
 
-<footer>
+    <!-- buttons -->
 
-    <strong>THE THINGS INSIDE</strong><br>
+    <div id="buttons">
 
-    A fictional psychological-horror project.<br>
+        <button class="horror-button" id="b0">Treasure</button>
+        <button class="horror-button" id="b1">Hollows</button>
+        <button class="horror-button" id="b2">Butterflies</button>
+        <button class="horror-button" id="b3">Blink</button>
+        <button class="horror-button" id="b4">Closet</button>
+        <button class="horror-button" id="b5">Tsunami</button>
+        <button class="horror-button" id="b6">Rage</button>
+        <button class="horror-button" id="b7">Cool</button>
+        <button class="horror-button" id="b8">Bait</button>
+        <button class="horror-button" id="b9">Surge</button>
 
-    The entities portrayed here are metaphors and are not
-    representations of people with mental illnesses.
+    </div>
 
-    <br><br>
 
-    If psychological themes in this website are personally difficult,
-    step away and take care of yourself.
+    <div id="response"></div>
 
-</footer>
+</main>
 
 
 <script>
+/* ==================================================
+   INTRO SEQUENCE
+================================================== */
 
-const monsters = {
+const intro = document.getElementById("intro");
+const introGirl = document.getElementById("introGirl");
+const main = document.getElementById("main");
 
-    anxiety: {
-        symbol: "👁",
-        title: "THE WATCHER",
-        quote: "\"Something is about to happen.\"",
-        description:
-            "The Watcher represents the experience of anxiety: " +
-            "the feeling that danger is approaching even when " +
-            "you cannot identify what the danger is.",
-        experience:
-            "It never sleeps. It checks the door. Then checks it again. " +
-            "Every heartbeat becomes evidence. Every silence becomes a warning. " +
-            "The Watcher doesn't need to attack. It only needs to convince you " +
-            "that something terrible is coming.",
-        responses: [
-            "THE WATCHER HAS NOTICED YOU.",
-            "You look behind you. Nothing is there.",
-            "Your heart beats faster.",
-            "The Watcher smiles.",
-            "For once, you tell it: \"Maybe. But not now.\""
-        ]
-    },
+setTimeout(() => {
+    intro.classList.add("close");
+}, 1200);
 
-    depression: {
-        symbol: "🕳",
-        title: "THE HOLLOW",
-        quote: "\"You used to care about this.\"",
-        description:
-            "The Hollow represents depressive experiences such as " +
-            "emptiness, loss of motivation, emotional numbness, and " +
-            "the feeling that things which once mattered have become distant.",
-        experience:
-            "The Hollow does not scream. It whispers. " +
-            "It sits beside you while the world continues without you. " +
-            "It makes your favorite songs sound distant and turns simple " +
-            "tasks into enormous walls.",
-        responses: [
-            "THE HOLLOW STARES BACK.",
-            "You remember something you used to love.",
-            "The Hollow tells you it doesn't matter.",
-            "You don't believe it completely.",
-            "A tiny crack appears in the darkness."
-        ]
-    },
+setTimeout(() => {
+    intro.classList.add("glitch");
+}, 3200);
 
-    ocd: {
-        symbol: "🔁",
-        title: "THE LOOP",
-        quote: "\"But what if?\"",
-        description:
-            "The Loop represents obsessive-compulsive experiences, " +
-            "particularly intrusive thoughts and the exhausting cycle " +
-            "of doubt, anxiety, and compulsive attempts to gain certainty.",
-        experience:
-            "The Loop asks a question. You answer. " +
-            "It asks again. You answer again. " +
-            "No answer is ever perfect enough. " +
-            "The monster isn't the thought itself. " +
-            "It's the endless demand to make uncertainty disappear.",
-        responses: [
-            "THE LOOP HAS A QUESTION.",
-            "\"Are you sure?\"",
-            "You answer.",
-            "\"Are you REALLY sure?\"",
-            "You decide you don't need to answer."
-        ]
-    },
+setTimeout(() => {
 
-    ptsd: {
-        symbol: "📼",
-        title: "THE ECHO",
-        quote: "\"This happened before.\"",
-        description:
-            "The Echo represents trauma-related experiences such as " +
-            "intrusive memories, flashbacks, hypervigilance, and the sense " +
-            "that something from the past is suddenly happening again.",
-        experience:
-            "The Echo lives in yesterday. " +
-            "Sometimes it stays quiet for months. " +
-            "Then a sound, smell, place, or word opens the door. " +
-            "For a moment, the distance between then and now disappears.",
-        responses: [
-            "THE ECHO PLAYS.",
-            "For a moment, you are somewhere else.",
-            "Then you notice your feet on the floor.",
-            "You name five things you can see.",
-            "The recording becomes quieter."
-        ]
-    },
+    intro.style.opacity = "0";
+    intro.style.filter = "blur(10px)";
 
-    insomnia: {
-        symbol: "🌑",
-        title: "THE WAKEFUL",
-        quote: "\"You have 4 hours and 17 minutes left.\"",
-        description:
-            "The Wakeful represents the exhausting experience of " +
-            "insomnia and the anxiety that can surround the inability " +
-            "to sleep.",
-        experience:
-            "The room is dark. Your body is tired. " +
-            "Your mind refuses to follow. " +
-            "The clock becomes an enemy. " +
-            "Every passing minute feels louder than the one before.",
-        responses: [
-            "THE CLOCK MOVES.",
-            "02:17",
-            "03:04",
-            "04:31",
-            "You stop looking at the clock."
-        ]
-    },
+    main.classList.add("visible");
 
-    dissociation: {
-        symbol: "🪞",
-        title: "THE MIRROR",
-        quote: "\"Do you feel real?\"",
-        description:
-            "The Mirror represents dissociative experiences such as " +
-            "depersonalization and derealization — moments when yourself " +
-            "or the surrounding world can feel strangely distant or unreal.",
-        experience:
-            "The Mirror copies everything perfectly. " +
-            "Your face. Your movements. Your voice. " +
-            "But something feels wrong. " +
-            "The room looks like a room from a dream you haven't finished waking from.",
-        responses: [
-            "THE MIRROR BLINKS.",
-            "You didn't.",
-            "The reflection smiles.",
-            "You touch the glass.",
-            "Cold. Solid. Real."
-        ]
+    setTimeout(() => {
+        intro.style.display = "none";
+        startPixelMessage();
+    }, 1700);
+
+}, 4300);
+
+
+/* ==================================================
+   PIXEL MESSAGE
+================================================== */
+
+const pixelContainer = document.getElementById("pixels");
+const messageText = document.getElementById("messageText");
+
+function startPixelMessage() {
+
+    /*
+       Create little pixels that appear to gather
+       above the girl's head.
+    */
+
+    for (let i = 0; i < 65; i++) {
+
+        const pixel = document.createElement("span");
+
+        pixel.className = "pixel";
+
+        pixel.style.animationDelay =
+            (Math.random() * 1.8) + "s";
+
+        pixel.style.transform =
+            `translate(
+                ${(Math.random() - .5) * 170}px,
+                ${Math.random() * 100}px
+            )`;
+
+        pixelContainer.appendChild(pixel);
     }
+
+    setTimeout(() => {
+        messageText.classList.add("show");
+    }, 1700);
+}
+
+
+/* ==================================================
+   BUTTON LOGIC
+================================================== */
+
+const buttons =
+    [...document.querySelectorAll(".horror-button")];
+
+const responses = {
+
+    Treasure:
+        "You remember finding something here.",
+
+    Hollows:
+        "There is nothing inside. You checked.",
+
+    Butterflies:
+        "They stopped moving when you looked at them.",
+
+    Blink:
+        "You blinked. Something changed.",
+
+    Closet:
+        "The door was already open.",
+
+    Tsunami:
+        "You hear water somewhere far away.",
+
+    Rage:
+        "You don't remember being angry.",
+
+    Cool:
+        "Everything suddenly feels very quiet.",
+
+    Bait:
+        "It was waiting for you to press this.",
+
+    Surge:
+        "Something just woke up."
 };
 
 
-let currentMonster = null;
+/*
+    Every button receives a hidden number of
+    successful attempts.
+
+    Some buttons flee once.
+    Some flee twice.
+*/
+
+buttons.forEach((button, index) => {
+
+    button.dataset.clicks = "0";
+
+    button.addEventListener("click", () => {
+
+        let clicks =
+            parseInt(button.dataset.clicks);
+
+        /*
+           Roughly half the time, the first click
+           makes the button flee.
+        */
+
+        if (
+            clicks === 0 &&
+            Math.random() < .55
+        ) {
+
+            button.dataset.clicks = "1";
+
+            flee(button);
+
+            return;
+        }
+
+        /*
+           Occasionally it flees a second time.
+        */
+
+        if (
+            clicks === 1 &&
+            Math.random() < .28
+        ) {
+
+            button.dataset.clicks = "2";
+
+            flee(button);
+
+            return;
+        }
+
+        /*
+           Actual activation.
+        */
+
+        activate(button);
+    });
+});
 
 
-function openMonster(type) {
+/* ==================================================
+   FLEE
+================================================== */
 
-    currentMonster = monsters[type];
+function flee(button) {
 
-    document.getElementById("modalSymbol").textContent =
-        currentMonster.symbol;
-
-    document.getElementById("modalTitle").textContent =
-        currentMonster.title;
-
-    document.getElementById("modalQuote").textContent =
-        currentMonster.quote;
-
-    document.getElementById("modalDescription").textContent =
-        currentMonster.description;
-
-    document.getElementById("modalExperience").textContent =
-        currentMonster.experience;
-
-    document.getElementById("result").textContent = "";
-
-    document.getElementById("monsterModal")
-        .classList.add("active");
-
-    document.body.classList.add("shake");
+    button.classList.add("flee");
 
     setTimeout(() => {
-        document.body.classList.remove("shake");
-    }, 500);
+
+        button.classList.remove("flee");
+
+        moveButton(button);
+        changeButtonSize(button);
+
+    }, 300);
 }
 
 
-function closeMonster() {
+/* ==================================================
+   RANDOM POSITION
+================================================== */
 
-    document.getElementById("monsterModal")
-        .classList.remove("active");
+function moveButton(button) {
 
-    currentMonster = null;
+    /*
+       Keep buttons away from the extreme edges
+       so they remain clickable.
+    */
+
+    const margin = 5;
+
+    const maxX =
+        window.innerWidth -
+        button.offsetWidth -
+        window.innerWidth * margin / 100;
+
+    const maxY =
+        window.innerHeight -
+        button.offsetHeight -
+        window.innerHeight * margin / 100;
+
+    const x =
+        window.innerWidth * margin / 100 +
+        Math.random() * (maxX - window.innerWidth * margin / 100);
+
+    const y =
+        window.innerHeight * margin / 100 +
+        Math.random() * (maxY - window.innerHeight * margin / 100);
+
+    button.style.left = x + "px";
+    button.style.top = y + "px";
 }
 
 
-function encounter() {
+/* ==================================================
+   RANDOM SIZE
+================================================== */
 
-    if (!currentMonster) return;
+function changeButtonSize(button) {
 
-    const result = document.getElementById("result");
+    const size =
+        0.7 + Math.random() * 0.8;
 
-    const responses = currentMonster.responses;
+    button.style.transform =
+        `scale(${size}) rotate(${(Math.random() - .5) * 8}deg)`;
 
-    result.textContent =
-        responses[Math.floor(Math.random() * responses.length)];
+    button.style.fontSize =
+        (16 + Math.random() * 12) + "px";
 
-    document.querySelector(".modal-content")
-        .classList.add("shake");
+    button.style.padding =
+        (7 + Math.random() * 9) +
+        "px " +
+        (14 + Math.random() * 18) +
+        "px";
+}
+
+
+/* ==================================================
+   ACTIVATION
+================================================== */
+
+function activate(button) {
+
+    const text =
+        responses[button.textContent.trim()] ||
+        "Something happened.";
+
+    showResponse(text);
+
+    /*
+       Reset the button's flee counter.
+    */
+
+    button.dataset.clicks = "0";
+
+    /*
+       Small visual reaction.
+    */
+
+    button.style.transform =
+        "scale(.85)";
 
     setTimeout(() => {
-        document.querySelector(".modal-content")
-            .classList.remove("shake");
-    }, 500);
+
+        button.style.transform = "";
+
+    }, 250);
+
+    /*
+       Clicking any button has a chance to make
+       another random button disappear/reappear.
+    */
+
+    if (Math.random() < .55) {
+
+        const other =
+            buttons[Math.floor(Math.random() * buttons.length)];
+
+        if (other !== button) {
+
+            other.classList.add("fading");
+
+            setTimeout(() => {
+
+                moveButton(other);
+                changeButtonSize(other);
+
+                other.classList.remove("fading");
+
+            }, 900);
+        }
+    }
 }
 
 
-/* Close modal when clicking outside it */
+/* ==================================================
+   RESPONSE TEXT
+================================================== */
 
-document.getElementById("monsterModal")
-    .addEventListener("click", function(event) {
+const response =
+    document.getElementById("response");
 
-        if (event.target === this) {
-            closeMonster();
+let responseTimer;
+
+function showResponse(text) {
+
+    clearTimeout(responseTimer);
+
+    response.textContent = text;
+
+    response.classList.add("show");
+
+    responseTimer =
+        setTimeout(() => {
+
+            response.classList.remove("show");
+
+        }, 2600);
+}
+
+
+/* ==================================================
+   RANDOM BUTTON TELEPORTATION
+================================================== */
+
+function randomButtonMovement() {
+
+    /*
+       Choose a random button.
+    */
+
+    const button =
+        buttons[Math.floor(Math.random() * buttons.length)];
+
+    /*
+       Only occasionally do anything, so the page
+       doesn't become impossible to use.
+    */
+
+    if (Math.random() < .65) {
+
+        button.classList.add("fading");
+
+        setTimeout(() => {
+
+            moveButton(button);
+            changeButtonSize(button);
+
+            button.classList.remove("fading");
+
+        }, 700);
+    }
+}
+
+
+/*
+   Buttons wander every few seconds.
+*/
+
+setInterval(
+    randomButtonMovement,
+    3500 + Math.random() * 2500
+);
+
+
+/* ==================================================
+   SUBTLE GIRL MOVEMENT
+================================================== */
+
+const girl =
+    document.getElementById("girl");
+
+setInterval(() => {
+
+    const x =
+        (Math.random() - .5) * 5;
+
+    const y =
+        (Math.random() - .5) * 4;
+
+    const r =
+        (Math.random() - .5) * 2;
+
+    girl.style.transform =
+        `translate(calc(-50% + ${x}px),
+                   calc(-50% + ${y}px))
+         rotate(${r}deg)`;
+
+}, 3000);
+
+
+/* ==================================================
+   BLINK BUTTON SPECIAL EFFECT
+================================================== */
+
+document.getElementById("b3")
+    .addEventListener("click", () => {
+
+        /*
+           Make the whole page briefly disappear
+           when "Blink" is successfully activated.
+        */
+
+        setTimeout(() => {
+
+            main.style.filter = "brightness(.15)";
+
+            setTimeout(() => {
+
+                main.style.filter = "brightness(1)";
+
+            }, 180);
+
+        }, 100);
+    });
+
+
+/* ==================================================
+   OCCASIONAL EYE MOVEMENT
+================================================== */
+
+const eye =
+    document.querySelector(".girl-eye");
+
+setInterval(() => {
+
+    eye.style.transform =
+        `translate(
+            ${(Math.random() - .5) * 7}px,
+            ${(Math.random() - .5) * 4}px
+        )`;
+
+}, 1800);
+
+
+/* ==================================================
+   RESIZE SAFETY
+================================================== */
+
+window.addEventListener("resize", () => {
+
+    buttons.forEach(button => {
+
+        const rect =
+            button.getBoundingClientRect();
+
+        if (
+            rect.right > window.innerWidth ||
+            rect.bottom > window.innerHeight
+        ) {
+            moveButton(button);
         }
 
     });
 
-
-/* Escape key */
-
-document.addEventListener("keydown", function(event) {
-
-    if (event.key === "Escape") {
-        closeMonster();
-    }
-
 });
-
 </script>
 
 </body>
