@@ -1,1231 +1,513 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Find My Name</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A psychologically disturbing interactive horror experience.">
+  <title>DON'T LOOK AWAY</title>
 
-<style>
-/* =========================================================
-   BASIC SETUP
-========================================================= */
+  <style>
+    * {
+      box-sizing: border-box;
+      cursor: crosshair;
+    }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #ddd;
+      font-family: "Courier New", monospace;
+    }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #c9edff;
-    font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
-}
+    body {
+      transition: background 0.3s;
+    }
 
-body {
-    cursor: default;
-}
-
-/* =========================================================
-   ROOM
-========================================================= */
-
-#room {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    background:
-        radial-gradient(circle at 50% 35%, rgba(255,255,255,.65), transparent 45%),
-        linear-gradient(#c8efff 0%, #dff7ff 65%, #b9e2ed 66%, #a9d3df 100%);
-}
-
-/* Wall */
-#room::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0,
-            transparent 79px,
-            rgba(90,160,180,.035) 80px
+    #noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.08;
+      background-image:
+        repeating-radial-gradient(
+          circle at 0 0,
+          transparent 0,
+          rgba(255,255,255,.15) 1px,
+          transparent 2px
         );
-    pointer-events: none;
-}
-
-/* Floor */
-.floor {
-    position: absolute;
-    left: -5%;
-    bottom: -13%;
-    width: 110%;
-    height: 43%;
-    background:
-        radial-gradient(ellipse at center, rgba(255,255,255,.5), transparent 60%),
-        repeating-linear-gradient(
-            0deg,
-            rgba(80,140,150,.05) 0,
-            rgba(80,140,150,.05) 2px,
-            transparent 2px,
-            transparent 38px
-        ),
-        #b7dce2;
-    transform: perspective(500px) rotateX(5deg);
-}
-
-/* =========================================================
-   RAINBOW
-========================================================= */
-
-.rainbow {
-    position: absolute;
-    left: -8%;
-    top: 8%;
-    width: 116%;
-    height: 390px;
-    border-radius: 50%;
-    transform: rotate(-1deg);
-    opacity: .82;
-    filter: blur(.2px);
-    pointer-events: none;
-}
-
-.rainbow span {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    border-style: solid;
-    border-left-color: transparent;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-}
-
-.r1 {
-    width: 100%;
-    height: 100%;
-    border-width: 30px;
-    border-top-color: #ff8c9b;
-}
-
-.r2 {
-    width: 93%;
-    height: 93%;
-    border-width: 27px;
-    border-top-color: #ffb36b;
-}
-
-.r3 {
-    width: 86%;
-    height: 86%;
-    border-width: 25px;
-    border-top-color: #ffe48b;
-}
-
-.r4 {
-    width: 79%;
-    height: 79%;
-    border-width: 23px;
-    border-top-color: #a9e7a5;
-}
-
-.r5 {
-    width: 72%;
-    height: 72%;
-    border-width: 21px;
-    border-top-color: #8fd8ff;
-}
-
-.r6 {
-    width: 65%;
-    height: 65%;
-    border-width: 19px;
-    border-top-color: #aaa5ed;
-}
-
-/* Rainbow bleeding */
-.rainbow::before,
-.rainbow::after {
-    content: "";
-    position: absolute;
-    width: 160px;
-    height: 100px;
-    filter: blur(18px);
-    opacity: .55;
-}
-
-.rainbow::before {
-    left: -15px;
-    bottom: 20px;
-    background: linear-gradient(
-        135deg,
-        #ff8c9b,
-        #ffb36b,
-        #ffe48b,
-        #a9e7a5,
-        #8fd8ff
-    );
-    transform: rotate(20deg);
-}
-
-.rainbow::after {
-    right: -15px;
-    bottom: 20px;
-    background: linear-gradient(
-        45deg,
-        #ff8c9b,
-        #ffb36b,
-        #ffe48b,
-        #a9e7a5,
-        #8fd8ff
-    );
-    transform: rotate(-20deg);
-}
-
-/* =========================================================
-   TOYS
-========================================================= */
-
-.toy {
-    position: absolute;
-    z-index: 4;
-}
-
-.ball {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background:
-        linear-gradient(145deg, #ffb4c1 0 33%, #fff1a6 34% 66%, #a8defa 67%);
-    box-shadow: 4px 8px 0 rgba(80,130,150,.12);
-}
-
-.ball.one {
-    left: 9%;
-    bottom: 19%;
-}
-
-.ball.two {
-    right: 12%;
-    bottom: 25%;
-    width: 50px;
-    height: 50px;
-    opacity: .8;
-}
-
-.block {
-    width: 58px;
-    height: 58px;
-    border-radius: 9px;
-    box-shadow: inset -5px -6px rgba(80,100,120,.1);
-}
-
-.block.one {
-    left: 20%;
-    bottom: 18%;
-    background: #ffadb9;
-    transform: rotate(-8deg);
-}
-
-.block.two {
-    left: 25%;
-    bottom: 15%;
-    background: #a7dff4;
-    transform: rotate(12deg);
-}
-
-.block.three {
-    left: 29%;
-    bottom: 18%;
-    background: #ffe59c;
-    transform: rotate(4deg);
-}
-
-.teddy {
-    right: 17%;
-    bottom: 15%;
-    width: 95px;
-    height: 115px;
-}
-
-.teddy .head {
-    position: absolute;
-    left: 17px;
-    top: 0;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    background: #c99f7a;
-}
-
-.teddy .ear {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #b88b68;
-    top: -5px;
-}
-
-.teddy .ear.left { left: 8px; }
-.teddy .ear.right { right: 8px; }
-
-.teddy .body {
-    position: absolute;
-    left: 8px;
-    top: 48px;
-    width: 78px;
-    height: 68px;
-    border-radius: 45% 45% 35% 35%;
-    background: #c99f7a;
-}
-
-.teddy .eye {
-    position: absolute;
-    z-index: 2;
-    width: 6px;
-    height: 7px;
-    background: #493d3a;
-    border-radius: 50%;
-    top: 25px;
-}
-
-.teddy .eye.left { left: 32px; }
-.teddy .eye.right { right: 32px; }
-
-.teddy .nose {
-    position: absolute;
-    z-index: 2;
-    left: 44%;
-    top: 38px;
-    width: 9px;
-    height: 7px;
-    border-radius: 50%;
-    background: #513d3a;
-}
-
-/* Toy train */
-.train {
-    left: 5%;
-    bottom: 10%;
-    width: 155px;
-    height: 65px;
-}
-
-.train .engine {
-    position: absolute;
-    left: 0;
-    bottom: 12px;
-    width: 65px;
-    height: 40px;
-    background: #9dcff0;
-    border-radius: 5px;
-}
-
-.train .roof {
-    position: absolute;
-    left: 10px;
-    bottom: 52px;
-    width: 45px;
-    height: 10px;
-    background: #f5b0bb;
-    border-radius: 8px 8px 0 0;
-}
-
-.train .car {
-    position: absolute;
-    bottom: 12px;
-    width: 45px;
-    height: 35px;
-    background: #ffe19a;
-    border-radius: 5px;
-}
-
-.train .car.one { left: 72px; }
-.train .car.two { left: 118px; }
-
-.wheel {
-    position: absolute;
-    bottom: 0;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #687d87;
-    border: 5px solid #dcebef;
-}
-
-.wheel.w1 { left: 10px; }
-.wheel.w2 { left: 48px; }
-.wheel.w3 { left: 83px; }
-.wheel.w4 { left: 128px; }
-
-/* =========================================================
-   EERIE TEXT
-========================================================= */
-
-.whispers {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.whisper {
-    position: absolute;
-    color: rgba(76, 111, 120, .13);
-    font-family: Georgia, serif;
-    font-size: clamp(12px, 1.4vw, 18px);
-    letter-spacing: 2px;
-    user-select: none;
-    filter: blur(.5px);
-}
-
-.whisper:nth-child(1) {
-    top: 20%;
-    left: 5%;
-    transform: rotate(-4deg);
-}
-
-.whisper:nth-child(2) {
-    top: 32%;
-    right: 8%;
-    transform: rotate(3deg);
-}
-
-.whisper:nth-child(3) {
-    top: 55%;
-    left: 4%;
-    transform: rotate(2deg);
-}
-
-.whisper:nth-child(4) {
-    top: 66%;
-    right: 5%;
-    transform: rotate(-3deg);
-}
-
-.whisper:nth-child(5) {
-    top: 43%;
-    left: 35%;
-}
-
-.whisper:nth-child(6) {
-    bottom: 7%;
-    left: 40%;
-    font-size: 13px;
-}
-
-.whisper:nth-child(7) {
-    top: 12%;
-    right: 29%;
-}
-
-.whisper:nth-child(8) {
-    bottom: 30%;
-    left: 53%;
-}
-
-.whisper:hover {
-    color: rgba(70, 95, 105, .4);
-}
-
-/* =========================================================
-   THE GIRL
-========================================================= */
-
-#girl {
-    position: absolute;
-    z-index: 7;
-    left: 50%;
-    bottom: 11%;
-    width: 180px;
-    height: 250px;
-    transform: translateX(-50%);
-    transition:
-        transform 2.5s cubic-bezier(.2,.8,.2,1),
-        width 2.5s,
-        height 2.5s;
-}
-
-/* Head */
-.head {
-    position: absolute;
-    left: 32px;
-    top: 10px;
-    width: 116px;
-    height: 125px;
-    border-radius: 48% 52% 50% 50%;
-    background: #f5cdb7;
-}
-
-/* Hair */
-.hair {
-    position: absolute;
-    z-index: 3;
-    left: 18px;
-    top: 0;
-    width: 142px;
-    height: 178px;
-    background: #342b35;
-    border-radius: 52% 48% 45% 55%;
-    clip-path: polygon(
-        0 0,
-        100% 0,
-        94% 100%,
-        82% 86%,
-        76% 100%,
-        65% 77%,
-        55% 100%,
-        46% 76%,
-        34% 100%,
-        28% 74%,
-        14% 100%,
-        10% 65%,
-        0 100%
-    );
-}
-
-/* Face opening */
-.face-gap {
-    position: absolute;
-    z-index: 4;
-    left: 63px;
-    top: 58px;
-    width: 38px;
-    height: 58px;
-    background: #f5cdb7;
-    border-radius: 50%;
-    transform: rotate(5deg);
-}
-
-/* Eye */
-.eye {
-    position: absolute;
-    z-index: 8;
-    left: 69px;
-    top: 76px;
-    width: 24px;
-    height: 13px;
-    border-radius: 50%;
-    background: #fff;
-    overflow: hidden;
-    opacity: .9;
-}
-
-.eye::after {
-    content: "";
-    position: absolute;
-    left: 9px;
-    top: 1px;
-    width: 9px;
-    height: 11px;
-    border-radius: 50%;
-    background: #211c27;
-}
-
-.eye::before {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    left: 12px;
-    top: 2px;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: white;
-}
-
-/* Body */
-.body {
-    position: absolute;
-    left: 42px;
-    bottom: 10px;
-    width: 98px;
-    height: 105px;
-    background: #a8d9e8;
-    border-radius: 45% 45% 20% 20%;
-}
-
-/* Arms clutching toy */
-.arm {
-    position: absolute;
-    z-index: 9;
-    width: 28px;
-    height: 90px;
-    background: #f5cdb7;
-    border-radius: 20px;
-    top: 112px;
-}
-
-.arm.left {
-    left: 39px;
-    transform: rotate(25deg);
-}
-
-.arm.right {
-    left: 113px;
-    transform: rotate(-25deg);
-}
-
-/* Toy she's holding */
-.doll {
-    position: absolute;
-    z-index: 8;
-    left: 66px;
-    top: 123px;
-    width: 52px;
-    height: 70px;
-    background: #f4aab9;
-    border-radius: 45% 45% 20% 20%;
-    box-shadow: inset 0 -10px rgba(120,90,110,.1);
-}
-
-.doll::before {
-    content: "";
-    position: absolute;
-    left: 10px;
-    top: -18px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #f5cdb7;
-}
-
-.doll::after {
-    content: "•  •";
-    position: absolute;
-    left: 10px;
-    top: -8px;
-    font-size: 8px;
-    color: #453b43;
-}
-
-/* =========================================================
-   INTRO / CLOSE-UP
-========================================================= */
-
-#intro {
-    position: fixed;
-    z-index: 100;
-    inset: 0;
-    background:
-        radial-gradient(circle at 50% 40%, #dff8ff, #a9dce8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 1.5s ease;
-}
-
-#introGirl {
-    position: relative;
-    width: 560px;
-    height: 720px;
-    transform: translateY(40px);
-    transition: transform 2s ease;
-}
-
-/* Close-up head */
-#introGirl .head {
-    left: 70px;
-    top: 30px;
-    width: 420px;
-    height: 450px;
-    background: #f3c9b2;
-}
-
-#introGirl .hair {
-    left: 30px;
-    top: 0;
-    width: 500px;
-    height: 650px;
-    border-radius: 50% 50% 45% 45%;
-}
-
-#introGirl .face-gap {
-    left: 270px;
-    top: 205px;
-    width: 120px;
-    height: 180px;
-}
-
-#introGirl .eye {
-    left: 290px;
-    top: 260px;
-    width: 74px;
-    height: 42px;
-}
-
-#introGirl .eye::after {
-    left: 27px;
-    top: 3px;
-    width: 30px;
-    height: 36px;
-}
-
-#introGirl .eye::before {
-    left: 39px;
-    top: 6px;
-    width: 10px;
-    height: 10px;
-}
-
-/* Intro text */
-#introText {
-    position: absolute;
-    bottom: 8%;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: rgba(50,75,80,.65);
-    font-size: 15px;
-    letter-spacing: 4px;
-    animation: breathing 3s infinite ease-in-out;
-}
-
-@keyframes breathing {
-    0%,100% { opacity: .4; }
-    50% { opacity: .9; }
-}
-
-/* =========================================================
-   HALLUCINATION EFFECT
-========================================================= */
-
-#hallucination {
-    position: fixed;
-    z-index: 200;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    background:
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,.2) 0px,
-            rgba(255,255,255,.2) 2px,
-            rgba(40,50,60,.08) 3px,
-            transparent 5px
+      background-size: 4px 4px;
+      animation: static 0.15s infinite;
+    }
+
+    @keyframes static {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-2px,1px); }
+      50% { transform: translate(1px,-2px); }
+      75% { transform: translate(2px,2px); }
+      100% { transform: translate(0,0); }
+    }
+
+    #screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #intro {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px;
+      transition: opacity 2s;
+    }
+
+    #intro h1 {
+      font-size: clamp(2rem, 7vw, 6rem);
+      letter-spacing: 0.25em;
+      margin: 0 0 30px;
+      color: #eee;
+      animation: flicker 4s infinite;
+    }
+
+    #intro p {
+      max-width: 650px;
+      color: #777;
+      line-height: 1.8;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 15px 35px;
+      background: transparent;
+      border: 1px solid #555;
+      color: #aaa;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all .3s;
+    }
+
+    button:hover {
+      color: white;
+      border-color: #aaa;
+      box-shadow: 0 0 20px rgba(255,255,255,.15);
+    }
+
+    #main {
+      width: min(900px, 90%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 3s;
+    }
+
+    #main h2 {
+      font-size: clamp(1.2rem, 4vw, 3rem);
+      font-weight: normal;
+      letter-spacing: .15em;
+      margin-bottom: 40px;
+    }
+
+    #main p {
+      color: #555;
+    }
+
+    #thought {
+      min-height: 90px;
+      margin: 40px auto;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: #aaa;
+      transition: all .4s;
+    }
+
+    #timer {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: #222;
+      font-size: .75rem;
+      z-index: 10;
+    }
+
+    /* ---------- PHOBIA EVENTS ---------- */
+
+    .event {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .event-text {
+      font-size: clamp(2rem, 9vw, 8rem);
+      text-align: center;
+      color: white;
+      text-shadow:
+        0 0 10px #fff,
+        0 0 30px #900;
+      animation: pulse 1s infinite;
+      padding: 20px;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.04); opacity: .65; }
+    }
+
+    /* Arachnophobia */
+
+    .spider {
+      position: fixed;
+      width: 80px;
+      height: 80px;
+      z-index: 110;
+      pointer-events: none;
+      animation: spiderMove 3s linear forwards;
+    }
+
+    .spider::before {
+      content: "🕷";
+      font-size: 75px;
+      filter: grayscale(1) brightness(.3);
+    }
+
+    @keyframes spiderMove {
+      from {
+        transform: translate(-100px,-100px) rotate(0deg);
+      }
+      to {
+        transform: translate(
+          calc(100vw + 100px),
+          calc(100vh + 100px)
+        ) rotate(720deg);
+      }
+    }
+
+    /* Trypophobia */
+
+    .holes {
+      position: fixed;
+      inset: 0;
+      z-index: 105;
+      background:
+        radial-gradient(circle, #080808 0 7px, transparent 8px)
+        0 0 / 32px 32px,
+        radial-gradient(circle, #111 0 5px, transparent 6px)
+        16px 16px / 32px 32px;
+      opacity: .95;
+      animation: holesShake .1s infinite;
+    }
+
+    @keyframes holesShake {
+      0% { transform: translate(0); }
+      50% { transform: translate(2px,-2px); }
+      100% { transform: translate(-2px,2px); }
+    }
+
+    /* Acrophobia */
+
+    .height {
+      position: fixed;
+      inset: 0;
+      z-index: 105;
+      background:
+        linear-gradient(
+          to bottom,
+          transparent 0 45%,
+          #222 46% 47%,
+          #000 48%
         );
-}
-
-#hallucination.active {
-    animation: hallucinate 2.8s ease-in-out forwards;
-}
-
-@keyframes hallucinate {
-    0% {
-        opacity: 0;
-        filter: blur(0);
-        transform: scale(1);
+      perspective: 500px;
     }
 
-    15% {
-        opacity: .8;
-        filter: blur(2px);
-        transform: scale(1.03) skewX(2deg);
+    .height::after {
+      content: "LOOK DOWN";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8vw;
+      color: #eee;
+      animation: fall 2s infinite;
     }
 
-    30% {
-        opacity: .15;
-        transform: scale(.98) skewX(-3deg);
+    @keyframes fall {
+      0% { transform: translate(-50%,-50%) scale(1); }
+      50% { transform: translate(-50%,-10%) scale(1.5); }
+      100% { transform: translate(-50%,-50%) scale(1); }
     }
 
-    45% {
-        opacity: .9;
-        filter: blur(8px);
-        transform: scale(1.08);
+    /* Claustrophobia */
+
+    .claustro {
+      position: fixed;
+      inset: 0;
+      z-index: 105;
+      background: #000;
+      box-shadow: inset 0 0 0 0 #111;
+      animation: closeIn 4s forwards;
     }
 
-    60% {
+    @keyframes closeIn {
+      from {
+        box-shadow: inset 0 0 0 0 #111;
+      }
+      to {
+        box-shadow: inset 0 0 35vw 20vw #000;
+      }
+    }
+
+    /* Nyctophobia */
+
+    .darkness {
+      position: fixed;
+      inset: 0;
+      z-index: 105;
+      background: #000;
+      animation: darknessPulse 2s infinite;
+    }
+
+    .darkness::after {
+      content: "something is standing behind you";
+      position: absolute;
+      bottom: 15%;
+      width: 100%;
+      text-align: center;
+      color: #222;
+      font-size: 1rem;
+    }
+
+    @keyframes darknessPulse {
+      0%,100% { opacity: .97; }
+      50% { opacity: .85; }
+    }
+
+    /* Thalassophobia */
+
+    .ocean {
+      position: fixed;
+      inset: 0;
+      z-index: 105;
+      background:
+        radial-gradient(
+          ellipse at center,
+          #123 0%,
+          #061019 40%,
+          #000 80%
+        );
+      animation: ocean 5s infinite;
+    }
+
+    .ocean::before {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      transform: translateX(-50%);
+      font-size: 8rem;
+      color: #234;
+      animation: sink 5s infinite;
+    }
+
+    @keyframes sink {
+      0% { top: 25%; opacity: 0; }
+      40% { opacity: 1; }
+      100% { top: 80%; opacity: 0; }
+    }
+
+    @keyframes ocean {
+      0%,100% { filter: brightness(.7); }
+      50% { filter: brightness(1); }
+    }
+
+    /* Megalophobia */
+
+    .huge {
+      position: fixed;
+      z-index: 105;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .huge span {
+      font-size: 80vw;
+      line-height: 1;
+      color: #080808;
+      text-shadow: 0 0 20px #333;
+      animation: hugePulse 3s infinite;
+    }
+
+    @keyframes hugePulse {
+      0%,100% { transform: scale(.8); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Face */
+
+    .face {
+      position: fixed;
+      z-index: 150;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: #ddd;
+      box-shadow: 0 0 60px rgba(255,255,255,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: faceAppear .15s infinite;
+    }
+
+    .face::before {
+      content: "●   ●";
+      position: absolute;
+      top: 55px;
+      font-size: 30px;
+      color: #000;
+    }
+
+    .face::after {
+      content: "────";
+      position: absolute;
+      bottom: 45px;
+      font-size: 35px;
+      color: #000;
+    }
+
+    @keyframes faceAppear {
+      0% { transform: scale(.3); }
+      60% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* Flash */
+
+    .flash {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: white;
+      animation: flash .15s forwards;
+    }
+
+    @keyframes flash {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .glitch {
+      animation: glitch .1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); filter: none; }
+      20% { transform: translate(-5px,2px); filter: invert(1); }
+      40% { transform: translate(5px,-2px); filter: none; }
+      60% { transform: translate(-2px,4px); filter: invert(.8); }
+      80% { transform: translate(3px,-3px); filter: none; }
+      100% { transform: translate(0); }
+    }
+
+    #leave {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 500;
+      margin: 0;
+      font-size: .7rem;
+      padding: 8px 14px;
+      opacity: .2;
+    }
+
+    #leave:hover {
+      opacity: 1;
+    }
+
+    @keyframes flicker {
+      0%,18%,22%,25%,53%,57%,100% {
+        opacity: 1;
+      }
+      20%,24%,55% {
         opacity: .2;
-        transform: scale(.94);
+      }
     }
 
-    75% {
-        opacity: .7;
-        filter: blur(3px);
-        transform: scale(1.02);
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
-
-    100% {
-        opacity: 0;
-        filter: blur(0);
-        transform: scale(1);
-    }
-}
-
-/* =========================================================
-   PIXEL MESSAGE
-========================================================= */
-
-#pixelMessage {
-    position: absolute;
-    z-index: 30;
-    left: 50%;
-    bottom: 47%;
-    transform: translateX(-50%);
-    color: rgba(55,76,83,.82);
-    font-family: monospace;
-    font-size: clamp(12px, 1.5vw, 18px);
-    letter-spacing: 1px;
-    white-space: nowrap;
-    opacity: 0;
-    filter: blur(1px);
-}
-
-#pixelMessage.show {
-    animation: pixelAppear 2.7s steps(12) forwards;
-}
-
-@keyframes pixelAppear {
-    0% {
-        opacity: 0;
-        filter: blur(8px);
-        letter-spacing: 8px;
-    }
-
-    20% {
-        opacity: .2;
-    }
-
-    45% {
-        opacity: .5;
-        filter: blur(2px);
-    }
-
-    70% {
-        opacity: .85;
-        filter: blur(.5px);
-        letter-spacing: 1px;
-    }
-
-    100% {
-        opacity: .82;
-        filter: blur(1px);
-    }
-}
-
-/* =========================================================
-   CONTENT
-========================================================= */
-
-#content {
-    position: absolute;
-    z-index: 20;
-    left: 50%;
-    top: 67%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    opacity: 0;
-    transition: opacity 2s ease;
-}
-
-#content.visible {
-    opacity: 1;
-}
-
-#content h1 {
-    color: rgba(64,91,99,.75);
-    font-size: clamp(25px, 4vw, 48px);
-    font-weight: normal;
-    letter-spacing: 5px;
-    text-shadow: 1px 2px rgba(255,255,255,.5);
-}
-
-#content p {
-    margin-top: 10px;
-    color: rgba(75,100,108,.55);
-    font-family: Georgia, serif;
-    font-size: 14px;
-    font-style: italic;
-}
-
-.options {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 25px;
-}
-
-.options button {
-    border: 1px solid rgba(100,140,150,.25);
-    background: rgba(255,255,255,.3);
-    color: rgba(67,91,99,.65);
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: .3s;
-}
-
-.options button:hover {
-    background: rgba(255,255,255,.7);
-    transform: translateY(-2px);
-}
-
-/* =========================================================
-   DARKER TEXT REACTION
-========================================================= */
-
-#response {
-    position: fixed;
-    z-index: 50;
-    left: 50%;
-    bottom: 5%;
-    transform: translateX(-50%);
-    width: 90%;
-    text-align: center;
-    font-family: Georgia, serif;
-    font-size: 13px;
-    color: rgba(60,70,75,.45);
-    opacity: 0;
-    transition: opacity 1s;
-}
-
-#response.show {
-    opacity: 1;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .rainbow {
-        top: 15%;
-        height: 250px;
-    }
-
-    .whisper {
-        font-size: 10px;
-    }
-
-    #girl {
-        transform: translateX(-50%) scale(.75);
-        transform-origin: bottom center;
-    }
-
-    #introGirl {
-        transform: scale(.65);
-    }
-
-    #content {
-        top: 70%;
-    }
-
-    .options {
-        flex-wrap: wrap;
-    }
-}
-</style>
+  </style>
 </head>
 
 <body>
 
-<!-- =======================================================
-     ROOM
-======================================================= -->
+  <div id="noise"></div>
 
-<div id="room">
+  <div id="screen">
 
-    <div class="rainbow">
-        <span class="r1"></span>
-        <span class="r2"></span>
-        <span class="r3"></span>
-        <span class="r4"></span>
-        <span class="r5"></span>
-        <span class="r6"></span>
-    </div>
+    <section id="intro">
+      <h1>DON'T LOOK AWAY</h1>
 
-    <div class="floor"></div>
+      <p>
+        This website contains sudden visual effects, disturbing imagery,
+        darkness, claustrophobic effects and unexpected events.
+      </p>
 
-    <!-- Eerie barely-readable questions -->
-    <div class="whispers">
+      <p>
+        <em>You will not know when they happen.</em>
+      </p>
 
-        <div class="whisper">
-            What if nobody remembers you?
-        </div>
+      <button id="enter">ENTER</button>
+    </section>
 
-        <div class="whisper">
-            Are you sure they are telling you the truth?
-        </div>
+    <main id="main">
+      <h2>YOU ARE SAFE</h2>
 
-        <div class="whisper">
-            How long can something be missing before it becomes empty?
-        </div>
+      <div id="thought">
+        Take a breath.<br>
+        Everything is normal.
+      </div>
 
-        <div class="whisper">
-            What if the world doesn't notice when you disappear?
-        </div>
+      <p id="subtext">
+        There is nothing here that can hurt you.
+      </p>
+    </main>
 
-        <div class="whisper">
-            Why does everything feel wrong?
-        </div>
+    <div id="timer">SESSION: 00:00</div>
 
-        <div class="whisper">
-            Is being afraid the same as knowing?
-        </div>
+    <button id="leave">LEAVE</button>
 
-        <div class="whisper">
-            Who taught you to trust them?
-        </div>
-
-        <div class="whisper">
-            Do you remember what you were before this?
-        </div>
-
-    </div>
-
-    <!-- Toys -->
-
-    <div class="toy ball one"></div>
-    <div class="toy ball two"></div>
-
-    <div class="toy block one"></div>
-    <div class="toy block two"></div>
-    <div class="toy block three"></div>
-
-    <div class="toy teddy">
-        <div class="head"></div>
-        <div class="ear left"></div>
-        <div class="ear right"></div>
-        <div class="body"></div>
-        <div class="eye left"></div>
-        <div class="eye right"></div>
-        <div class="nose"></div>
-    </div>
-
-    <div class="toy train">
-        <div class="engine"></div>
-        <div class="roof"></div>
-        <div class="car one"></div>
-        <div class="car two"></div>
-        <div class="wheel w1"></div>
-        <div class="wheel w2"></div>
-        <div class="wheel w3"></div>
-        <div class="wheel w4"></div>
-    </div>
-
-    <!-- The girl in the background -->
-
-    <div id="girl">
-
-        <div class="head"></div>
-        <div class="hair"></div>
-        <div class="face-gap"></div>
-        <div class="eye"></div>
-
-        <div class="body"></div>
-
-        <div class="arm left"></div>
-        <div class="arm right"></div>
-
-        <div class="doll"></div>
-
-    </div>
-
-    <!-- Pixel message -->
-
-    <div id="pixelMessage">
-        I lost my name. Find it. Please..?
-    </div>
-
-    <!-- Main content -->
-
-    <div id="content">
-
-        <h1>Do you remember?</h1>
-
-        <p>
-            Something is waiting for you.
-        </p>
-
-        <div class="options">
-            <button onclick="answer('remember')">I remember.</button>
-            <button onclick="answer('dont')">I don't.</button>
-            <button onclick="answer('who')">Who are you?</button>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =======================================================
-     INTRO
-======================================================= -->
-
-<div id="intro">
-
-    <div id="introGirl">
-
-        <div class="head"></div>
-        <div class="hair"></div>
-        <div class="face-gap"></div>
-        <div class="eye"></div>
-
-    </div>
-
-    <div id="introText">
-        ...
-    </div>
-
-</div>
-
-<!-- Hallucination overlay -->
-
-<div id="hallucination"></div>
-
-<!-- Bottom response -->
-
-<div id="response"></div>
-
+  </div>
 
 <script>
 
-/* =========================================================
-   INTRO SEQUENCE
-========================================================= */
-
-const intro = document.getElementById("intro");
-const introGirl = document.getElementById("introGirl");
-const hallucination = document.getElementById("hallucination");
-const girl = document.getElementById("girl");
-const pixelMessage = document.getElementById("pixelMessage");
-const content = document.getElementById("content");
-const response = document.getElementById("response");
-
-let started = false;
-
-/*
-    Sequence:
-
-    0 sec     - girl is extremely close
-    3 sec     - slight movement
-    5 sec     - hallucination begins
-    7.8 sec   - intro disappears
-    8 sec     - distant girl is revealed
-    9 sec     - pixel message appears
-    11 sec    - main content appears
-*/
-
-window.addEventListener("load", () => {
-
-    setTimeout(() => {
-        introGirl.style.transform =
-            "translateY(0px) scale(1.05)";
-    }, 1000);
-
-    setTimeout(() => {
-        hallucination.classList.add("active");
-    }, 5000);
-
-    setTimeout(() => {
-
-        intro.style.opacity = "0";
-
-        girl.style.transform =
-            "translateX(-50%) scale(.65)";
-
-        setTimeout(() => {
-            intro.style.display = "none";
-        }, 1600);
-
-    }, 6900);
-
-    setTimeout(() => {
-        pixelMessage.classList.add("show");
-    }, 7600);
-
-    setTimeout(() => {
-        content.classList.add("visible");
-    }, 9800);
-
-});
-
-
-/* =========================================================
-   BUTTON RESPONSES
-========================================================= */
-
-function answer(choice) {
-
-    response.classList.remove("show");
-
-    setTimeout(() => {
-
-        if (choice === "remember") {
-
-            response.innerText =
-                "Then why can't you remember her name?";
-
-        }
-
-        if (choice === "dont") {
-
-            response.innerText =
-                "That's okay. She doesn't remember either.";
-
-        }
-
-        if (choice === "who") {
-
-            response.innerText =
-                "She used to know.";
-
-        }
-
-        response.classList.add("show");
-
-    }, 100);
-
-}
-
-
-/* =========================================================
-   OCCASIONAL TEXT FLICKER
-   Makes the hidden questions feel slightly unstable.
-========================================================= */
-
-const whispers = document.querySelectorAll(".whisper");
-
-setInterval(() => {
-
-    const random =
-        whispers[Math.floor(Math.random() * whispers.length)];
-
-    random.style.opacity = "0.32";
-
-    setTimeout(() => {
-        random.style.opacity = "";
-    }, 300);
-
-}, 2400);
-
-
-/* =========================================================
-   VERY SUBTLE ROOM MOVEMENT
-========================================================= */
-
-document.addEventListener("mousemove", (event) => {
-
-    if (window.innerWidth < 700) return;
-
-    const x =
-        (event.clientX / window.innerWidth - .5) * 2;
-
-    const y =
-        (event.clientY / window.innerHeight - .5) * 2;
-
-    girl.style.marginLeft = `${x * 3}px`;
-    girl.style.marginBottom = `${11 + y * .5}%`;
-
-});
-
-</script>
-
-</body>
-</html>
+  const intro = document.getElementById("intro");
+  const main = document.getElementById("main");
+  const thought = document.getElementById("thought");
+  const subtext = document.getElementById("subtext");
+  const timer = document.getElementById("timer");
+  const leave = document.getElementById("leave");
+```
